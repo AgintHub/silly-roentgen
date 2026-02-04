@@ -1,112 +1,57 @@
 dag_type: plain_text
-description: Create a 6-pager on scaling a system design with daily Glue ETLs, Aurora
-  Postgres DB, React MFEs, and a GraphQL API
-name: scaling_system_design
+description: A workflow to create a personalized, context-aware 'hello' greeting message
+  with concurrent elements
+name: generate_hello_message
 nodes:
-  analyze_requirements:
+  assemble_final_message:
     agent: false
-    description: Perform a detailed analysis of the system requirements to identify
-      potential scalability bottlenecks.
-    name: analyze_requirements
+    description: Combine all greeting elements into final output
+    name: assemble_final_message
     nodes_depended_on:
-    - write_architecture_section
-    nodes_dependent_on:
-    - define_system_requirements
-    prompt: Analyze the system requirements to identify patterns, trends, and areas
-      of focus.
-  define_system_requirements:
+    - generate_base_greeting
+    - create_time_suffix
+    - select_emoji
+    nodes_dependent_on: []
+    prompt: 'Create a final greeting message combining: 1) the base greeting from
+      ''generate_base_greeting'', 2) the time suffix from ''create_time_suffix'',
+      and 3) the emoji from ''select_emoji''. Format as: [Greeting] + [Time suffix]
+      + [Emoji]'
+  create_time_suffix:
     agent: false
-    description: Describe the system requirements, including any relevant metrics
-      or benchmarks.
-    name: define_system_requirements
+    description: Add a time-dependent salutation
+    name: create_time_suffix
     nodes_depended_on:
-    - gather_requirements
+    - determine_current_time_period
     nodes_dependent_on:
-    - write_introduction
-    prompt: List and describe the system requirements, including performance, scalability,
-      and security constraints.
-  finalize_document:
+    - assemble_final_message
+    prompt: 'Generate a time-specific message based on the time period input. For
+      morning input: ''Good morning!''. For afternoon: ''Good afternoon!''.'
+  determine_current_time_period:
     agent: false
-    description: Iterate on the document content and formatting to ensure it is free
-      of errors and meets the desired style.
-    name: finalize_document
+    description: Calculate the current time of day
+    name: determine_current_time_period
     nodes_depended_on: []
     nodes_dependent_on:
-    - write_etl_section
-    prompt: Copy-edit and proofread the document, ensuring it flows well and adheres
-      to style guidelines.
-  gather_requirements:
+    - create_time_suffix
+    - select_emoji
+    prompt: Determine the current time of day (e.g., morning, afternoon, evening,
+      night). Return only the period name.
+  generate_base_greeting:
     agent: false
-    description: Collect data and perform analysis to understand the existing system's
-      strengths and weaknesses.
-    name: gather_requirements
+    description: Create the foundational greeting phrase ('Hello')
+    name: generate_base_greeting
     nodes_depended_on: []
     nodes_dependent_on:
-    - identify_existing_system
-    prompt: Gather relevant information about the existing system, including data,
-      workflows, and hardware configurations.
-  identify_existing_system:
+    - assemble_final_message
+    prompt: Generate the core greeting word or phrase. Focus on a simple, universal
+      form like 'Hello', 'Hi', or 'Greetings'.
+  select_emoji:
     agent: false
-    description: Perform an initial analysis of the existing system to identify areas
-      for improvement.
-    name: identify_existing_system
+    description: Choose an appropriate visual accent
+    name: select_emoji
     nodes_depended_on:
-    - analyze_requirements
+    - determine_current_time_period
     nodes_dependent_on:
-    - gather_requirements
-    prompt: Identify the existing system, including its components, data flows, and
-      performance metrics.
-  implement_etl_process:
-    agent: false
-    description: Configure the ETL process to extract relevant data and update the
-      scaled system in real-time.
-    name: implement_etl_process
-    nodes_depended_on:
-    - write_etl_section
-    nodes_dependent_on:
-    - refine_system_design
-    prompt: Set up the ETL process to extract data from the existing system, transform
-      it into a usable format, and load it into the scaled system.
-  refine_system_design:
-    agent: false
-    description: Iterate on the system design to ensure it meets the system requirements
-      and scalability constraints.
-    name: refine_system_design
-    nodes_depended_on:
-    - implement_etl_process
-    nodes_dependent_on:
-    - write_architecture_section
-    prompt: Refine the system design by incorporating feedback from stakeholders and
-      refining data flows, API endpoints, and system performance metrics.
-  write_architecture_section:
-    agent: false
-    description: Outline the architectural decisions made to address the system requirements
-      and scalability concerns.
-    name: write_architecture_section
-    nodes_depended_on:
-    - refine_system_design
-    nodes_dependent_on:
-    - analyze_requirements
-    prompt: Describe the architectural decisions made for the scaled system, including
-      data processing, API design, and system infrastructure.
-  write_etl_section:
-    agent: false
-    description: Document the ETL process, including relevant data flows and system
-      performance metrics.
-    name: write_etl_section
-    nodes_depended_on:
-    - finalize_document
-    nodes_dependent_on:
-    - implement_etl_process
-    prompt: Describe the ETL process, including data extraction, transformation, and
-      loading.
-  write_introduction:
-    agent: false
-    description: Write the introduction to the document, setting the stage for the
-      rest of the content.
-    name: write_introduction
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - define_system_requirements
-    prompt: Write a clear and concise introduction to the system design scaling problem.
-      Include your thesis statement and outline the topics to be covered.
+    - assemble_final_message
+    prompt: 'Select an emoji matching the time period from input. For morning: 🌅.
+      For afternoon: ☀️. For evening: 🌇. For night: 🌙.'

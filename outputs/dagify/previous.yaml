@@ -1,76 +1,112 @@
 dag_type: plain_text
-description: A collection of the most significant and influential poetry of the 20th
-  century, organized chronologically by movement or style.
-name: best_poetry_of_the_20th_century
+description: Create a 6-pager on scaling a system design with daily Glue ETLs, Aurora
+  Postgres DB, React MFEs, and a GraphQL API
+name: scaling_system_design
 nodes:
-  choose_poetry_samples:
+  analyze_requirements:
     agent: false
-    description: Select notable poetry samples from each poet.
-    name: choose_poetry_samples
+    description: Perform a detailed analysis of the system requirements to identify
+      potential scalability bottlenecks.
+    name: analyze_requirements
     nodes_depended_on:
-    - compile_poet_bibliographies
-    nodes_dependent_on: []
-    prompt: Choose representative poetry samples from each listed poet, considering
-      their significance, influence, and literary merit, in a table format.
-  compile_poet_bibliographies:
+    - write_architecture_section
+    nodes_dependent_on:
+    - define_system_requirements
+    prompt: Analyze the system requirements to identify patterns, trends, and areas
+      of focus.
+  define_system_requirements:
     agent: false
-    description: Organize poet bibliographies in MLA format.
-    name: compile_poet_bibliographies
+    description: Describe the system requirements, including any relevant metrics
+      or benchmarks.
+    name: define_system_requirements
     nodes_depended_on:
-    - research_poets
-    nodes_dependent_on: []
-    prompt: Compile bibliographies for each of the listed poets, including their major
-      works, influences, and critical reception, in MLA format.
-  compose_poetry_volumes:
+    - gather_requirements
+    nodes_dependent_on:
+    - write_introduction
+    prompt: List and describe the system requirements, including performance, scalability,
+      and security constraints.
+  finalize_document:
     agent: false
-    description: Create the final poetry volumes.
-    name: compose_poetry_volumes
-    nodes_depended_on:
-    - format_poetry_volumes
-    nodes_dependent_on: []
-    prompt: Compose the final poetry volumes, incorporating the selected samples,
-      and arrange the contents in a logical and aesthetically pleasing order.
-  edit_poetry_samples:
-    agent: false
-    description: Edit and improve the poetry samples.
-    name: edit_poetry_samples
-    nodes_depended_on:
-    - choose_poetry_samples
-    nodes_dependent_on: []
-    prompt: Edit and refine the selected poetry samples to ensure clarity, coherence,
-      and literary quality, using a style guide.
-  format_poetry_volumes:
-    agent: false
-    description: Organize the poetry samples into volumes or sections.
-    name: format_poetry_volumes
-    nodes_depended_on:
-    - edit_poetry_samples
-    nodes_dependent_on: []
-    prompt: Format the selected poetry samples into volumes or sections, using a style
-      guide and following the chosen movement or style organization.
-  identify_movement_styles:
-    agent: false
-    description: Classify poets by movement or style.
-    name: identify_movement_styles
-    nodes_depended_on:
-    - research_poets
-    nodes_dependent_on: []
-    prompt: Identify and categorize the listed poets by movement or style (e.g., Modernism,
-      Surrealism, Confessional poetry), in a table format.
-  proofread_poetry_volumes:
-    agent: false
-    description: Review the poetry volumes for errors and make revisions.
-    name: proofread_poetry_volumes
-    nodes_depended_on:
-    - compose_poetry_volumes
-    nodes_dependent_on: []
-    prompt: Proofread the final poetry volumes for errors in formatting, grammar,
-      or punctuation, and make any necessary revisions.
-  research_poets:
-    agent: false
-    description: List significant poets and their notable works.
-    name: research_poets
+    description: Iterate on the document content and formatting to ensure it is free
+      of errors and meets the desired style.
+    name: finalize_document
     nodes_depended_on: []
-    nodes_dependent_on: []
-    prompt: Research and list the top 100 poets of the 20th century, including their
-      notable works and styles, in chronological order.
+    nodes_dependent_on:
+    - write_etl_section
+    prompt: Copy-edit and proofread the document, ensuring it flows well and adheres
+      to style guidelines.
+  gather_requirements:
+    agent: false
+    description: Collect data and perform analysis to understand the existing system's
+      strengths and weaknesses.
+    name: gather_requirements
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - identify_existing_system
+    prompt: Gather relevant information about the existing system, including data,
+      workflows, and hardware configurations.
+  identify_existing_system:
+    agent: false
+    description: Perform an initial analysis of the existing system to identify areas
+      for improvement.
+    name: identify_existing_system
+    nodes_depended_on:
+    - analyze_requirements
+    nodes_dependent_on:
+    - gather_requirements
+    prompt: Identify the existing system, including its components, data flows, and
+      performance metrics.
+  implement_etl_process:
+    agent: false
+    description: Configure the ETL process to extract relevant data and update the
+      scaled system in real-time.
+    name: implement_etl_process
+    nodes_depended_on:
+    - write_etl_section
+    nodes_dependent_on:
+    - refine_system_design
+    prompt: Set up the ETL process to extract data from the existing system, transform
+      it into a usable format, and load it into the scaled system.
+  refine_system_design:
+    agent: false
+    description: Iterate on the system design to ensure it meets the system requirements
+      and scalability constraints.
+    name: refine_system_design
+    nodes_depended_on:
+    - implement_etl_process
+    nodes_dependent_on:
+    - write_architecture_section
+    prompt: Refine the system design by incorporating feedback from stakeholders and
+      refining data flows, API endpoints, and system performance metrics.
+  write_architecture_section:
+    agent: false
+    description: Outline the architectural decisions made to address the system requirements
+      and scalability concerns.
+    name: write_architecture_section
+    nodes_depended_on:
+    - refine_system_design
+    nodes_dependent_on:
+    - analyze_requirements
+    prompt: Describe the architectural decisions made for the scaled system, including
+      data processing, API design, and system infrastructure.
+  write_etl_section:
+    agent: false
+    description: Document the ETL process, including relevant data flows and system
+      performance metrics.
+    name: write_etl_section
+    nodes_depended_on:
+    - finalize_document
+    nodes_dependent_on:
+    - implement_etl_process
+    prompt: Describe the ETL process, including data extraction, transformation, and
+      loading.
+  write_introduction:
+    agent: false
+    description: Write the introduction to the document, setting the stage for the
+      rest of the content.
+    name: write_introduction
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - define_system_requirements
+    prompt: Write a clear and concise introduction to the system design scaling problem.
+      Include your thesis statement and outline the topics to be covered.

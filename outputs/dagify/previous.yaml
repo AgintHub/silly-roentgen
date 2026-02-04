@@ -1,61 +1,76 @@
 dag_type: plain_text
-description: A workflow for executing a test
-name: testworkflow
+description: A collection of the most significant and influential poetry of the 20th
+  century, organized chronologically by movement or style.
+name: best_poetry_of_the_20th_century
 nodes:
-  clarify_test_objective:
+  choose_poetry_samples:
     agent: false
-    description: Clarify the objective of the test
-    name: clarify_test_objective
+    description: Select notable poetry samples from each poet.
+    name: choose_poetry_samples
+    nodes_depended_on:
+    - compile_poet_bibliographies
+    nodes_dependent_on: []
+    prompt: Choose representative poetry samples from each listed poet, considering
+      their significance, influence, and literary merit, in a table format.
+  compile_poet_bibliographies:
+    agent: false
+    description: Organize poet bibliographies in MLA format.
+    name: compile_poet_bibliographies
+    nodes_depended_on:
+    - research_poets
+    nodes_dependent_on: []
+    prompt: Compile bibliographies for each of the listed poets, including their major
+      works, influences, and critical reception, in MLA format.
+  compose_poetry_volumes:
+    agent: false
+    description: Create the final poetry volumes.
+    name: compose_poetry_volumes
+    nodes_depended_on:
+    - format_poetry_volumes
+    nodes_dependent_on: []
+    prompt: Compose the final poetry volumes, incorporating the selected samples,
+      and arrange the contents in a logical and aesthetically pleasing order.
+  edit_poetry_samples:
+    agent: false
+    description: Edit and improve the poetry samples.
+    name: edit_poetry_samples
+    nodes_depended_on:
+    - choose_poetry_samples
+    nodes_dependent_on: []
+    prompt: Edit and refine the selected poetry samples to ensure clarity, coherence,
+      and literary quality, using a style guide.
+  format_poetry_volumes:
+    agent: false
+    description: Organize the poetry samples into volumes or sections.
+    name: format_poetry_volumes
+    nodes_depended_on:
+    - edit_poetry_samples
+    nodes_dependent_on: []
+    prompt: Format the selected poetry samples into volumes or sections, using a style
+      guide and following the chosen movement or style organization.
+  identify_movement_styles:
+    agent: false
+    description: Classify poets by movement or style.
+    name: identify_movement_styles
+    nodes_depended_on:
+    - research_poets
+    nodes_dependent_on: []
+    prompt: Identify and categorize the listed poets by movement or style (e.g., Modernism,
+      Surrealism, Confessional poetry), in a table format.
+  proofread_poetry_volumes:
+    agent: false
+    description: Review the poetry volumes for errors and make revisions.
+    name: proofread_poetry_volumes
+    nodes_depended_on:
+    - compose_poetry_volumes
+    nodes_dependent_on: []
+    prompt: Proofread the final poetry volumes for errors in formatting, grammar,
+      or punctuation, and make any necessary revisions.
+  research_poets:
+    agent: false
+    description: List significant poets and their notable works.
+    name: research_poets
     nodes_depended_on: []
     nodes_dependent_on: []
-    prompt: Please provide the objective of the test.
-  collect_test_results:
-    agent: false
-    description: Collect the test results
-    name: collect_test_results
-    nodes_depended_on:
-    - run_test_executable
-    nodes_dependent_on: []
-    prompt: Please collect and report the test results.
-  create_test_environment:
-    agent: false
-    description: Set up the test environment
-    name: create_test_environment
-    nodes_depended_on:
-    - define_test_parameters
-    nodes_dependent_on: []
-    prompt: Please set up the test environment based on the defined parameters.
-  define_test_parameters:
-    agent: false
-    description: Define the parameters for the test
-    name: define_test_parameters
-    nodes_depended_on:
-    - clarify_test_objective
-    nodes_dependent_on: []
-    prompt: Please provide the test data and define the parameters for the test (e.g.,
-      input values, expected outcomes).
-  document_test_results:
-    agent: false
-    description: Document the test results
-    name: document_test_results
-    nodes_depended_on:
-    - evaluate_test_outcomes
-    nodes_dependent_on: []
-    prompt: Please document the test results, including any issues or observations.
-  evaluate_test_outcomes:
-    agent: false
-    description: Evaluate the test outcomes
-    name: evaluate_test_outcomes
-    nodes_depended_on:
-    - collect_test_results
-    nodes_dependent_on: []
-    prompt: Please evaluate the test outcomes and determine if the test passed or
-      failed.
-  run_test_executable:
-    agent: false
-    description: Run the test executable
-    name: run_test_executable
-    nodes_depended_on:
-    - create_test_environment
-    nodes_dependent_on: []
-    prompt: Please run the test executable in the test environment.
+    prompt: Research and list the top 100 poets of the 20th century, including their
+      notable works and styles, in chronological order.

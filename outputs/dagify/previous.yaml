@@ -1,117 +1,149 @@
 dag_type: plain_text
-description: A highly concurrent workflow for executing a comprehensive software testing
-  process, from planning to validation with maximal parallelism
-name: test_execution_dag
+description: A workflow for executing comprehensive software testing across multiple
+  layers, ensuring test case design, execution, and result analysis
+name: software_testing_workflow
 nodes:
-  environment_setup:
+  aggregate_test_results:
     agent: false
-    description: Configure test environments (hardware, software, network)
-    name: environment_setup
+    description: Consolidate test execution outputs
+    name: aggregate_test_results
     nodes_depended_on:
-    - test_plan_review
+    - execute_unit_tests_module1
+    - execute_unit_tests_module2
+    - execute_integration_tests
     nodes_dependent_on:
-    - test_execution
-    prompt: List all hardware/software/network configurations needed for testing.
-      Execute setup steps to reproduce a production-like test environment.
-  final_approval:
+    - generate_test_report
+    prompt: 'Combine raw test outputs from all test suites into a standardized results
+      format. Track: total tests, passed/failed counts, error types, and component-specific
+      statistics.'
+  analyze_test_coverage:
     agent: false
-    description: Obtain stakeholder sign-off for quality acceptance
-    name: final_approval
+    description: Evaluate tested code portions
+    name: analyze_test_coverage
     nodes_depended_on:
-    - test_validation
+    - aggregate_test_results
+    nodes_dependent_on:
+    - generate_test_report
+    prompt: Calculate code coverage metrics from test execution logs. Identify modules
+      with <80% coverage and generate a priority list for additional testing.
+  execute_integration_tests:
+    agent: false
+    description: Run system interaction tests
+    name: execute_integration_tests
+    nodes_depended_on:
+    - write_integration_tests
+    - set_up_test_environment
+    nodes_dependent_on:
+    - aggregate_test_results
+    prompt: Execute the integration test suite in the configured test environment.
+      Collect execution logs and failure analysis.
+  execute_unit_tests_module1:
+    agent: false
+    description: Run unit tests for first module
+    name: execute_unit_tests_module1
+    nodes_depended_on:
+    - write_unit_tests_module1
+    - set_up_test_environment
+    nodes_dependent_on:
+    - aggregate_test_results
+    prompt: Execute all unit tests for the first module module1 in the configured
+      test environment. Collect execution logs and pass/fail status.
+  execute_unit_tests_module2:
+    agent: false
+    description: Run unit tests for second module
+    name: execute_unit_tests_module2
+    nodes_depended_on:
+    - write_unit_tests_module2
+    - set_up_test_environment
+    nodes_dependent_on:
+    - aggregate_test_results
+    prompt: Execute all unit tests for the second module module2 in the configured
+      test environment. Collect execution logs and pass/fail status.
+  generate_test_report:
+    agent: false
+    description: Create final test quality assessment
+    name: generate_test_report
+    nodes_depended_on:
+    - aggregate_test_results
+    - analyze_test_coverage
     nodes_dependent_on: []
-    prompt: Create checklist for stakeholder sign-off confirming business objectives
-      met, risks documented, and next steps (production deployment or rework) specified.
-  requirement_traceability_matrix:
+    prompt: 'Produce a formal test quality report with: 1) Executive summary 2) Detailed
+      metrics table 3) Component-specific failures 4) Coverage gaps 5) Recommended
+      next steps. Format in markdown.'
+  identify_testable_components:
     agent: false
-    description: Map test cases to functional/technical requirements
-    name: requirement_traceability_matrix
-    nodes_depended_on:
-    - test_plan_review
-    nodes_dependent_on:
-    - test_coverage_analysis
-    prompt: 'Create a matrix cross-referencing each test case with specific requirements
-      from the specification document. Format: Test Case ID | Requirement ID | Coverage
-      Type (functional/non-functional)'
-  test_case_development:
-    agent: false
-    description: Create test scenarios, inputs, and expected outcomes
-    name: test_case_development
-    nodes_depended_on:
-    - test_plan_review
-    nodes_dependent_on:
-    - test_execution
-    - requirement_traceability_matrix
-    prompt: Generate 10-15 test scenarios with detailed inputs, preconditions, and
-      expected results categorized by test type (functional, edge cases, regression
-      tests).
-  test_coverage_analysis:
-    agent: false
-    description: Measure percentage of requirements satisfied by test suite
-    name: test_coverage_analysis
-    nodes_depended_on:
-    - test_execution
-    - requirement_traceability_matrix
-    nodes_dependent_on:
-    - test_report_generation
-    prompt: 'Calculate requirement coverage using the traceability matrix and test
-      execution results. List: Total Requirements | Tested Requirements | % Coverage
-      | Gaps'
-  test_execution:
-    agent: false
-    description: Run automated/manual test scripts against SUT
-    name: test_execution
-    nodes_depended_on:
-    - environment_setup
-    - test_case_development
-    nodes_dependent_on:
-    - test_result_analysis
-    - test_coverage_analysis
-    prompt: 'Execute each test case and record pass/fail status with screenshots/log
-      snippets for failed cases. Format results as: Test Case ID | Result (Pass/Fail)
-      | Duration'
-  test_plan_review:
-    agent: false
-    description: Review and finalize test scope, objectives, and constraints
-    name: test_plan_review
+    description: Enumerate distinct modules/functional units requiring testing
+    name: identify_testable_components
     nodes_depended_on: []
     nodes_dependent_on:
-    - environment_setup
-    - test_case_development
-    - requirement_traceability_matrix
-    prompt: Review the test scope document and provide a confirmation (or rejection)
-      of the testing objectives, budget, and timelines. State 'Approved' or 'Revisions
-      Required' with a single paragraph rationale.
-  test_report_generation:
+    - install_testing_dependencies
+    - write_unit_tests_module1
+    - write_unit_tests_module2
+    prompt: List all distinct functional components/modules in the software system
+      that require testing (e.g., authentication module, payment processor, API gateway).
+      Limit to 8-12 items with clear boundaries.
+  install_testing_dependencies:
     agent: false
-    description: Aggregate test metrics into stakeholders' reports
-    name: test_report_generation
-    nodes_depended_on:
-    - test_result_analysis
-    - test_coverage_analysis
+    description: Set up required testing frameworks and tools
+    name: install_testing_dependencies
+    nodes_depended_on: []
     nodes_dependent_on:
-    - test_validation
-    prompt: 'Create a summary report with: 1) Pass/Fail statistics 2) Issue distribution
-      by severity 3) Coverage percentages 4) Recommendations for retesting/fixes'
-  test_result_analysis:
+    - write_unit_tests_module1
+    - write_unit_tests_module2
+    - set_up_test_environment
+    prompt: Install all required testing frameworks (e.g., Jest, PyTest) and tools
+      (e.g., Postman, Selenium) for the system's stack. List installed packages and
+      versions.
+  set_up_test_environment:
     agent: false
-    description: Classify, prioritize, and triage test failures
-    name: test_result_analysis
+    description: Configure isolated testing infrastructure
+    name: set_up_test_environment
     nodes_depended_on:
-    - test_execution
+    - install_testing_dependencies
     nodes_dependent_on:
-    - test_report_generation
-    prompt: Analyze failed test cases and categorize issues by severity (Critical/Major/Minor),
-      impact, and component. Provide root cause analysis for Critical/Major failures
-      only.
-  test_validation:
+    - execute_unit_tests_module1
+    - execute_unit_tests_module2
+    - execute_integration_tests
+    prompt: Create a separate test environment with configured databases, mock services,
+      and environment variables. Document environment setup steps and configurations.
+  tear_down_test_environment:
     agent: false
-    description: Verify test artifacts align with quality criteria
-    name: test_validation
+    description: Clean up testing infrastructure
+    name: tear_down_test_environment
     nodes_depended_on:
-    - test_report_generation
+    - execute_integration_tests
+    nodes_dependent_on: []
+    prompt: 'Terminate all test environment components: destroy VMs, delete test databases,
+      clear temporary files. Confirm environment is fully cleaned.'
+  write_integration_tests:
+    agent: false
+    description: Create tests for system component interactions
+    name: write_integration_tests
+    nodes_depended_on:
+    - identify_testable_components
     nodes_dependent_on:
-    - final_approval
-    prompt: Verify completeness of test documentation, pass/fail criteria met, and
-      coverage goals achieved. State 'Test Passes' or 'Test Fails' with 1-2 sentences
-      justification.
+    - execute_integration_tests
+    prompt: Design integration test scenarios covering interactions between 2-3 key
+      components from 'identify_testable_components'. Emphasize dependency validation.
+  write_unit_tests_module1:
+    agent: false
+    description: Create unit tests for first module
+    name: write_unit_tests_module1
+    nodes_depended_on:
+    - identify_testable_components
+    - install_testing_dependencies
+    nodes_dependent_on:
+    - execute_unit_tests_module1
+    prompt: Develop comprehensive unit tests for the first module/feature listed in
+      'identify_testable_components'. Focus on edge cases and error conditions.
+  write_unit_tests_module2:
+    agent: false
+    description: Create unit tests for second module
+    name: write_unit_tests_module2
+    nodes_depended_on:
+    - identify_testable_components
+    - install_testing_dependencies
+    nodes_dependent_on:
+    - execute_unit_tests_module2
+    prompt: Develop comprehensive unit tests for the second module/feature listed
+      in 'identify_testable_components'. Focus on edge cases and error conditions.

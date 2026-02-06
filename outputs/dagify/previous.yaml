@@ -1,151 +1,150 @@
 dag_type: plain_text
-description: A highly concurrent testing workflow covering scope definition, environment
-  setup, test design, execution, and reporting
-name: structured_testing_workflow
+description: A comprehensive research workflow for analyzing and writing an academic
+  paper on Tolstoy's life, major works, and literary legacy with maximal concurrency
+name: write_tolstoy_research_paper
 nodes:
-  analyze_test_results:
+  analyzeliterarymovements:
     agent: false
-    description: Interpret test outcomes
-    name: analyze_test_results
+    description: Connect Tolstoy to concurrent literary schools
+    name: analyzeliterarymovements
     nodes_depended_on:
-    - execute_test_cases
+    - compilehistoricalcontext
     nodes_dependent_on:
-    - generate_test_report
-    prompt: Identify patterns in test failures, performance bottlenecks, and potential
-      system interactions.
-  define_test_case_categories:
+    - developthesis
+    prompt: Compare/contrast Tolstoy's realism/naturalism with Dostoevsky, Turgenev,
+      and Chekhov
+  compilehistoricalcontext:
     agent: false
-    description: Classify testing requirements
-    name: define_test_case_categories
+    description: Document 19th century social/philosophical context
+    name: compilehistoricalcontext
     nodes_depended_on:
-    - define_test_scope
+    - gatherbiographicaldata
     nodes_dependent_on:
-    - design_individual_test_cases
-    prompt: Create distinct testing categories covering functional, edge case, stress,
-      regression, and acceptance testing types.
-  define_test_criteria:
+    - developthesis
+    - analyzeliterarymovements
+    prompt: List the key sociopolitical developments in Russia (1828-1910) that influenced
+      Tolstoy's writing
+  compilelistofworks:
     agent: false
-    description: Establish measurable validation standards
-    name: define_test_criteria
-    nodes_depended_on:
-    - define_test_scope
-    nodes_dependent_on:
-    - define_test_cases
-    - validate_test_outputs
-    prompt: Define clear pass/fail criteria for all test categories including response
-      time thresholds, accuracy metrics, and error tolerance levels.
-  define_test_scope:
-    agent: false
-    description: Establish the boundaries and objectives for testing
-    name: define_test_scope
+    description: Create authoritative list of Tolstoy's major and minor works
+    name: compilelistofworks
     nodes_depended_on: []
     nodes_dependent_on:
-    - define_test_criteria
-    - list_system_parameters
-    prompt: Define what aspects need testing (e.g., system components, features, performance
-      metrics) and establish the success criteria. Focus only on scope boundary definition.
-  design_individual_test_cases:
+    - identifythemesinworks
+    - performworkanalysis_ak
+    - performworkanalysis_wp
+    - conductliteraturereview
+    prompt: List all novels, short stories, plays, and essays by Tolstoy with original
+      Russian titles and English translations
+  conductliteraturereview:
     agent: false
-    description: Create specific test procedures
-    name: design_individual_test_cases
+    description: Survey academic interpretations of Tolstoy's works
+    name: conductliteraturereview
     nodes_depended_on:
-    - define_test_criteria
-    - define_test_case_categories
-    - list_system_parameters
+    - compilelistofworks
+    - identifythemesinworks
     nodes_dependent_on:
-    - write_test_scripts
-    - execute_test_cases
-    prompt: Design specific test procedures for each category with defined inputs,
-      expected outputs, and required system state.
-  determine_test_environment:
+    - developthesis
+    prompt: Summarize the three most cited critical perspectives on Tolstoy's major
+      works
+  developthesis:
     agent: false
-    description: identify required test infrastructure
-    name: determine_test_environment
+    description: Formulate central argument for the paper
+    name: developthesis
     nodes_depended_on:
-    - define_test_scope
+    - gatherbiographicaldata
+    - conductliteraturereview
+    - identifythemesinworks
     nodes_dependent_on:
-    - setup_environment_configuration
-    prompt: List all hardware, software, and network requirements needed for test
-      execution. Include OS versions, server specs, and connectivity needs.
-  execute_test_cases:
+    - performworkanalysis_ak
+    - performworkanalysis_wp
+    - draftpaperoutline
+    prompt: Create a thesis statement that links Tolstoy's life experiences to his
+      narrative techniques and thematic concerns
+  draftpaperoutline:
     agent: false
-    description: Run automated test procedures
-    name: execute_test_cases
+    description: Create structured paper architecture
+    name: draftpaperoutline
     nodes_depended_on:
-    - design_individual_test_cases
-    - setup_test_data
-    - setup_environment_configuration
-    - write_test_scripts
+    - developthesis
+    - performworkanalysis_ak
+    - performworkanalysis_wp
     nodes_dependent_on:
-    - analyze_test_results
-    - validate_test_outputs
-    prompt: Execute all test cases in the configured environment while capturing system
-      responses and behavior logs.
-  generate_test_report:
+    - writeabstract
+    - writeconclusion
+    prompt: 'Generate a 5-chapter outline with: introduction, biography, theme analysis,
+      work analysis, legacy/conclusion'
+  finalizereferences:
     agent: false
-    description: Document findings
-    name: generate_test_report
+    description: Compile and format citation list
+    name: finalizereferences
     nodes_depended_on:
-    - validate_test_outputs
-    - analyze_test_results
+    - conductliteraturereview
+    - writeconclusion
     nodes_dependent_on: []
-    prompt: Synthesize all test results into standardized format including defect
-      tracking numbers, status summary, and recommended next steps.
-  list_system_parameters:
+    prompt: Format all academic sources/primary texts using MLA style with hanging
+      indents
+  gatherbiographicaldata:
     agent: false
-    description: Documentation of system configuration values
-    name: list_system_parameters
-    nodes_depended_on:
-    - define_test_scope
+    description: Collect key biographical events and dates in Tolstoy's life
+    name: gatherbiographicaldata
+    nodes_depended_on: []
     nodes_dependent_on:
-    - define_test_cases
-    - setup_test_data
-    prompt: Create a comprehensive list of system parameters affecting test conditions
-      and dependencies to be validated.
-  setup_environment_configuration:
+    - compilehistoricalcontext
+    - developthesis
+    prompt: List Tolstoy's birth/death dates, major life events, education, military
+      service, and family background in chronological order
+  identifythemesinworks:
     agent: false
-    description: Implement test infrastructure
-    name: setup_environment_configuration
+    description: Extract recurring literary, philosophical, and moral themes
+    name: identifythemesinworks
     nodes_depended_on:
-    - determine_test_environment
+    - compilelistofworks
     nodes_dependent_on:
-    - write_test_scripts
-    - execute_test_cases
-    prompt: Configure test environment with specified hardware/software requirements
-      and system parameters.
-  setup_test_data:
+    - performworkanalysis_ak
+    - performworkanalysis_wp
+    - developthesis
+    prompt: Create a categorized list of recurring themes in Tolstoy's works including
+      existential questions, social commentary, and spiritual explorations
+  performworkanalysis_ak:
     agent: false
-    description: Prepare required test materials
-    name: setup_test_data
+    description: Deep analysis of Anna Karenina
+    name: performworkanalysis_ak
     nodes_depended_on:
-    - define_test_scope
-    - define_test_case_categories
-    - list_system_parameters
+    - compilelistofworks
+    - developthesis
     nodes_dependent_on:
-    - execute_test_cases
-    - write_test_scripts
-    prompt: Generate and organize all test data including fixture files, dummy records,
-      and required input parameters.
-  validate_test_outputs:
+    - draftpaperoutline
+    prompt: Analyze Anna Karenina's narrative structure, character dynamics, and thematic
+      resonance with the formulated thesis
+  performworkanalysis_wp:
     agent: false
-    description: Confirm results against expectations
-    name: validate_test_outputs
+    description: Deep analysis of War and Peace
+    name: performworkanalysis_wp
     nodes_depended_on:
-    - execute_test_cases
-    - define_test_criteria
+    - compilelistofworks
+    - developthesis
     nodes_dependent_on:
-    - generate_test_report
-    prompt: Compare actual outputs with defined criteria to identify pass/fail status
-      and anomalies.
-  write_test_scripts:
+    - draftpaperoutline
+    prompt: Analyze War and Peace's historical realism, philosophical discourse, and
+      structural innovations relevant to the thesis
+  writeabstract:
     agent: false
-    description: Automate test procedures
-    name: write_test_scripts
+    description: Create summary overview for paper
+    name: writeabstract
     nodes_depended_on:
-    - design_individual_test_cases
-    - setup_test_data
-    - setup_environment_configuration
+    - draftpaperoutline
+    nodes_dependent_on: []
+    prompt: Write a 200-word abstract summarizing the paper's thesis and methodology
+  writeconclusion:
+    agent: false
+    description: Craft final summative section
+    name: writeconclusion
+    nodes_depended_on:
+    - draftpaperoutline
+    - performworkanalysis_ak
+    - performworkanalysis_wp
     nodes_dependent_on:
-    - execute_test_cases
-    prompt: Create executable test scripts for all designed test cases incorporating
-      required data and environment configurations.
+    - finalizereferences
+    prompt: Create a 3-paragraph conclusion that reiterates thesis, summarizes key
+      findings, and suggests research directions

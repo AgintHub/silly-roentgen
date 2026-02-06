@@ -1,150 +1,117 @@
 dag_type: plain_text
-description: A comprehensive research workflow for analyzing and writing an academic
-  paper on Tolstoy's life, major works, and literary legacy with maximal concurrency
-name: write_tolstoy_research_paper
+description: A highly concurrent workflow for executing a comprehensive software testing
+  process, from planning to validation with maximal parallelism
+name: test_execution_dag
 nodes:
-  analyzeliterarymovements:
+  environment_setup:
     agent: false
-    description: Connect Tolstoy to concurrent literary schools
-    name: analyzeliterarymovements
+    description: Configure test environments (hardware, software, network)
+    name: environment_setup
     nodes_depended_on:
-    - compilehistoricalcontext
+    - test_plan_review
     nodes_dependent_on:
-    - developthesis
-    prompt: Compare/contrast Tolstoy's realism/naturalism with Dostoevsky, Turgenev,
-      and Chekhov
-  compilehistoricalcontext:
+    - test_execution
+    prompt: List all hardware/software/network configurations needed for testing.
+      Execute setup steps to reproduce a production-like test environment.
+  final_approval:
     agent: false
-    description: Document 19th century social/philosophical context
-    name: compilehistoricalcontext
+    description: Obtain stakeholder sign-off for quality acceptance
+    name: final_approval
     nodes_depended_on:
-    - gatherbiographicaldata
-    nodes_dependent_on:
-    - developthesis
-    - analyzeliterarymovements
-    prompt: List the key sociopolitical developments in Russia (1828-1910) that influenced
-      Tolstoy's writing
-  compilelistofworks:
+    - test_validation
+    nodes_dependent_on: []
+    prompt: Create checklist for stakeholder sign-off confirming business objectives
+      met, risks documented, and next steps (production deployment or rework) specified.
+  requirement_traceability_matrix:
     agent: false
-    description: Create authoritative list of Tolstoy's major and minor works
-    name: compilelistofworks
+    description: Map test cases to functional/technical requirements
+    name: requirement_traceability_matrix
+    nodes_depended_on:
+    - test_plan_review
+    nodes_dependent_on:
+    - test_coverage_analysis
+    prompt: 'Create a matrix cross-referencing each test case with specific requirements
+      from the specification document. Format: Test Case ID | Requirement ID | Coverage
+      Type (functional/non-functional)'
+  test_case_development:
+    agent: false
+    description: Create test scenarios, inputs, and expected outcomes
+    name: test_case_development
+    nodes_depended_on:
+    - test_plan_review
+    nodes_dependent_on:
+    - test_execution
+    - requirement_traceability_matrix
+    prompt: Generate 10-15 test scenarios with detailed inputs, preconditions, and
+      expected results categorized by test type (functional, edge cases, regression
+      tests).
+  test_coverage_analysis:
+    agent: false
+    description: Measure percentage of requirements satisfied by test suite
+    name: test_coverage_analysis
+    nodes_depended_on:
+    - test_execution
+    - requirement_traceability_matrix
+    nodes_dependent_on:
+    - test_report_generation
+    prompt: 'Calculate requirement coverage using the traceability matrix and test
+      execution results. List: Total Requirements | Tested Requirements | % Coverage
+      | Gaps'
+  test_execution:
+    agent: false
+    description: Run automated/manual test scripts against SUT
+    name: test_execution
+    nodes_depended_on:
+    - environment_setup
+    - test_case_development
+    nodes_dependent_on:
+    - test_result_analysis
+    - test_coverage_analysis
+    prompt: 'Execute each test case and record pass/fail status with screenshots/log
+      snippets for failed cases. Format results as: Test Case ID | Result (Pass/Fail)
+      | Duration'
+  test_plan_review:
+    agent: false
+    description: Review and finalize test scope, objectives, and constraints
+    name: test_plan_review
     nodes_depended_on: []
     nodes_dependent_on:
-    - identifythemesinworks
-    - performworkanalysis_ak
-    - performworkanalysis_wp
-    - conductliteraturereview
-    prompt: List all novels, short stories, plays, and essays by Tolstoy with original
-      Russian titles and English translations
-  conductliteraturereview:
+    - environment_setup
+    - test_case_development
+    - requirement_traceability_matrix
+    prompt: Review the test scope document and provide a confirmation (or rejection)
+      of the testing objectives, budget, and timelines. State 'Approved' or 'Revisions
+      Required' with a single paragraph rationale.
+  test_report_generation:
     agent: false
-    description: Survey academic interpretations of Tolstoy's works
-    name: conductliteraturereview
+    description: Aggregate test metrics into stakeholders' reports
+    name: test_report_generation
     nodes_depended_on:
-    - compilelistofworks
-    - identifythemesinworks
+    - test_result_analysis
+    - test_coverage_analysis
     nodes_dependent_on:
-    - developthesis
-    prompt: Summarize the three most cited critical perspectives on Tolstoy's major
-      works
-  developthesis:
+    - test_validation
+    prompt: 'Create a summary report with: 1) Pass/Fail statistics 2) Issue distribution
+      by severity 3) Coverage percentages 4) Recommendations for retesting/fixes'
+  test_result_analysis:
     agent: false
-    description: Formulate central argument for the paper
-    name: developthesis
+    description: Classify, prioritize, and triage test failures
+    name: test_result_analysis
     nodes_depended_on:
-    - gatherbiographicaldata
-    - conductliteraturereview
-    - identifythemesinworks
+    - test_execution
     nodes_dependent_on:
-    - performworkanalysis_ak
-    - performworkanalysis_wp
-    - draftpaperoutline
-    prompt: Create a thesis statement that links Tolstoy's life experiences to his
-      narrative techniques and thematic concerns
-  draftpaperoutline:
+    - test_report_generation
+    prompt: Analyze failed test cases and categorize issues by severity (Critical/Major/Minor),
+      impact, and component. Provide root cause analysis for Critical/Major failures
+      only.
+  test_validation:
     agent: false
-    description: Create structured paper architecture
-    name: draftpaperoutline
+    description: Verify test artifacts align with quality criteria
+    name: test_validation
     nodes_depended_on:
-    - developthesis
-    - performworkanalysis_ak
-    - performworkanalysis_wp
+    - test_report_generation
     nodes_dependent_on:
-    - writeabstract
-    - writeconclusion
-    prompt: 'Generate a 5-chapter outline with: introduction, biography, theme analysis,
-      work analysis, legacy/conclusion'
-  finalizereferences:
-    agent: false
-    description: Compile and format citation list
-    name: finalizereferences
-    nodes_depended_on:
-    - conductliteraturereview
-    - writeconclusion
-    nodes_dependent_on: []
-    prompt: Format all academic sources/primary texts using MLA style with hanging
-      indents
-  gatherbiographicaldata:
-    agent: false
-    description: Collect key biographical events and dates in Tolstoy's life
-    name: gatherbiographicaldata
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - compilehistoricalcontext
-    - developthesis
-    prompt: List Tolstoy's birth/death dates, major life events, education, military
-      service, and family background in chronological order
-  identifythemesinworks:
-    agent: false
-    description: Extract recurring literary, philosophical, and moral themes
-    name: identifythemesinworks
-    nodes_depended_on:
-    - compilelistofworks
-    nodes_dependent_on:
-    - performworkanalysis_ak
-    - performworkanalysis_wp
-    - developthesis
-    prompt: Create a categorized list of recurring themes in Tolstoy's works including
-      existential questions, social commentary, and spiritual explorations
-  performworkanalysis_ak:
-    agent: false
-    description: Deep analysis of Anna Karenina
-    name: performworkanalysis_ak
-    nodes_depended_on:
-    - compilelistofworks
-    - developthesis
-    nodes_dependent_on:
-    - draftpaperoutline
-    prompt: Analyze Anna Karenina's narrative structure, character dynamics, and thematic
-      resonance with the formulated thesis
-  performworkanalysis_wp:
-    agent: false
-    description: Deep analysis of War and Peace
-    name: performworkanalysis_wp
-    nodes_depended_on:
-    - compilelistofworks
-    - developthesis
-    nodes_dependent_on:
-    - draftpaperoutline
-    prompt: Analyze War and Peace's historical realism, philosophical discourse, and
-      structural innovations relevant to the thesis
-  writeabstract:
-    agent: false
-    description: Create summary overview for paper
-    name: writeabstract
-    nodes_depended_on:
-    - draftpaperoutline
-    nodes_dependent_on: []
-    prompt: Write a 200-word abstract summarizing the paper's thesis and methodology
-  writeconclusion:
-    agent: false
-    description: Craft final summative section
-    name: writeconclusion
-    nodes_depended_on:
-    - draftpaperoutline
-    - performworkanalysis_ak
-    - performworkanalysis_wp
-    nodes_dependent_on:
-    - finalizereferences
-    prompt: Create a 3-paragraph conclusion that reiterates thesis, summarizes key
-      findings, and suggests research directions
+    - final_approval
+    prompt: Verify completeness of test documentation, pass/fail criteria met, and
+      coverage goals achieved. State 'Test Passes' or 'Test Fails' with 1-2 sentences
+      justification.

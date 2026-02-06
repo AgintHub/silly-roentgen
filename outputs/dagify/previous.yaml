@@ -1,233 +1,151 @@
 dag_type: plain_text
-description: A workflow for drafting an architectural blog post on AWS Aurora PostgreSQL
-  covering architecture, components, use cases, performance, security, and cost.
-name: draft_aurora_postgresql_blog_post
+description: A highly concurrent testing workflow covering scope definition, environment
+  setup, test design, execution, and reporting
+name: structured_testing_workflow
 nodes:
-  create_architecture_diagrams:
+  analyze_test_results:
     agent: false
-    description: Design visual representations of key architectural concepts.
-    name: create_architecture_diagrams
+    description: Interpret test outcomes
+    name: analyze_test_results
     nodes_depended_on:
-    - research_aurora_postgresql_architecture
-    - write_architecture_overview_section
+    - execute_test_cases
     nodes_dependent_on:
-    - perform_final_review
-    prompt: Create 2-3 architectural diagrams showing Aurora PostgreSQL's distributed
-      storage, read replicas, and VPC integration. Provide captions for each diagram.
-  create_blog_post_outline:
+    - generate_test_report
+    prompt: Identify patterns in test failures, performance bottlenecks, and potential
+      system interactions.
+  define_test_case_categories:
     agent: false
-    description: Develop a structural framework for the blog post based on researched
-      elements.
-    name: create_blog_post_outline
+    description: Classify testing requirements
+    name: define_test_case_categories
     nodes_depended_on:
-    - research_aurora_postgresql_architecture
-    - identify_key_components
-    - explore_performance_features
-    - investigate_security_model
-    - examine_aurora_postgresql_use_cases
-    - investigate_cost_structure
+    - define_test_scope
     nodes_dependent_on:
-    - write_introduction_section
-    - write_conclusion_section
-    prompt: Create a blog post outline with standard sections (introduction, architecture,
-      components, performance, security, use cases, cost, and conclusion). Indicate
-      the flow between technical topics.
-  examine_aurora_postgresql_use_cases:
+    - design_individual_test_cases
+    prompt: Create distinct testing categories covering functional, edge case, stress,
+      regression, and acceptance testing types.
+  define_test_criteria:
     agent: false
-    description: Identify typical deployment scenarios and industry applications where
-      Aurora PostgreSQL excels.
-    name: examine_aurora_postgresql_use_cases
+    description: Establish measurable validation standards
+    name: define_test_criteria
+    nodes_depended_on:
+    - define_test_scope
+    nodes_dependent_on:
+    - define_test_cases
+    - validate_test_outputs
+    prompt: Define clear pass/fail criteria for all test categories including response
+      time thresholds, accuracy metrics, and error tolerance levels.
+  define_test_scope:
+    agent: false
+    description: Establish the boundaries and objectives for testing
+    name: define_test_scope
     nodes_depended_on: []
     nodes_dependent_on:
-    - write_use_cases_section
-    prompt: List 3-5 use cases where AWS Aurora PostgreSQL is recommended over traditional
-      PostgreSQL deployments. Include examples for data warehousing and high-throughput
-      transaction workloads.
-  explore_performance_features:
+    - define_test_criteria
+    - list_system_parameters
+    prompt: Define what aspects need testing (e.g., system components, features, performance
+      metrics) and establish the success criteria. Focus only on scope boundary definition.
+  design_individual_test_cases:
     agent: false
-    description: Analyze performance optimization features like read replicas, caching,
-      and SQL query optimization.
-    name: explore_performance_features
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - write_performance_section
-    prompt: List and describe AWS Aurora PostgreSQL's performance-enhancing features
-      such as read replicas, automated scaling, and query acceleration. Use technical
-      details where relevant.
-  format_final_blog_post:
-    agent: false
-    description: Apply publishing formatting standards including headings and references.
-    name: format_final_blog_post
+    description: Create specific test procedures
+    name: design_individual_test_cases
     nodes_depended_on:
-    - perform_final_review
+    - define_test_criteria
+    - define_test_case_categories
+    - list_system_parameters
+    nodes_dependent_on:
+    - write_test_scripts
+    - execute_test_cases
+    prompt: Design specific test procedures for each category with defined inputs,
+      expected outputs, and required system state.
+  determine_test_environment:
+    agent: false
+    description: identify required test infrastructure
+    name: determine_test_environment
+    nodes_depended_on:
+    - define_test_scope
+    nodes_dependent_on:
+    - setup_environment_configuration
+    prompt: List all hardware, software, and network requirements needed for test
+      execution. Include OS versions, server specs, and connectivity needs.
+  execute_test_cases:
+    agent: false
+    description: Run automated test procedures
+    name: execute_test_cases
+    nodes_depended_on:
+    - design_individual_test_cases
+    - setup_test_data
+    - setup_environment_configuration
+    - write_test_scripts
+    nodes_dependent_on:
+    - analyze_test_results
+    - validate_test_outputs
+    prompt: Execute all test cases in the configured environment while capturing system
+      responses and behavior logs.
+  generate_test_report:
+    agent: false
+    description: Document findings
+    name: generate_test_report
+    nodes_depended_on:
+    - validate_test_outputs
+    - analyze_test_results
     nodes_dependent_on: []
-    prompt: Format the blog post with standard markdown headers (H1-H4), code blocks
-      for examples, inline diagrams, and section references. Apply consistent style
-      (bullets, line spacing, code syntax highlighting).
-  identify_key_components:
+    prompt: Synthesize all test results into standardized format including defect
+      tracking numbers, status summary, and recommended next steps.
+  list_system_parameters:
     agent: false
-    description: List key components of AWS Aurora PostgreSQL such as DB cluster,
-      instance types, and storage volumes.
-    name: identify_key_components
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - write_key_components_section
-    prompt: Identify and list the primary components and services within AWS Aurora
-      PostgreSQL (e.g., DB cluster, instance management, storage layer). Use bullet
-      points and avoid technical jargon.
-  investigate_cost_structure:
-    agent: false
-    description: Analyze pricing models, including on-demand, reserved instances,
-      and cost optimization strategies.
-    name: investigate_cost_structure
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - write_cost_considerations_section
-    prompt: Summarize AWS Aurora PostgreSQL pricing models, instance-to-cost ratios,
-      storage costs, and recommendations for cost optimization. Use a comparison table
-      if appropriate.
-  investigate_security_model:
-    agent: false
-    description: Evaluate security features including encryption, IAM integration,
-      and VPC isolation.
-    name: investigate_security_model
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - write_security_section
-    prompt: Detail the security mechanisms in AWS Aurora PostgreSQL, such as encryption
-      at rest, in-transit, IAM authentication, and database activity auditing. Focus
-      on AWS-specific integrations.
-  perform_final_review:
-    agent: false
-    description: Ensure coherence and technical accuracy across all post sections.
-    name: perform_final_review
+    description: Documentation of system configuration values
+    name: list_system_parameters
     nodes_depended_on:
-    - write_introduction_section
-    - write_architecture_overview_section
-    - write_key_components_section
-    - write_performance_section
-    - write_security_section
-    - write_use_cases_section
-    - write_cost_considerations_section
-    - write_conclusion_section
-    - create_architecture_diagrams
+    - define_test_scope
     nodes_dependent_on:
-    - format_final_blog_post
-    prompt: Review all completed sections (2000-word limit total) for coherence, factual
-      accuracy, and adherence to technical documentation standards. Ensure all code
-      examples and diagrams are properly labeled.
-  research_aurora_postgresql_architecture:
+    - define_test_cases
+    - setup_test_data
+    prompt: Create a comprehensive list of system parameters affecting test conditions
+      and dependencies to be validated.
+  setup_environment_configuration:
     agent: false
-    description: Research the architecture of AWS Aurora PostgreSQL, including distributed
-      storage, replication, and compatibility.
-    name: research_aurora_postgresql_architecture
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - write_architecture_overview_section
-    prompt: Research the architecture of AWS Aurora PostgreSQL, focusing on how it
-      compares to traditional PostgreSQL and how it integrates with other AWS services.
-      Summarize key architectural concepts in bullet points.
-  write_architecture_overview_section:
-    agent: false
-    description: Document architectural principles and design patterns specific to
-      Aurora PostgreSQL.
-    name: write_architecture_overview_section
+    description: Implement test infrastructure
+    name: setup_environment_configuration
     nodes_depended_on:
-    - research_aurora_postgresql_architecture
-    - create_blog_post_outline
+    - determine_test_environment
     nodes_dependent_on:
-    - write_key_components_section
-    prompt: Write a technical overview (500-word limit) of Aurora PostgreSQL architecture,
-      including multi-AZ deployment, storage disaggregation, and compatibility with
-      PostgreSQL wire protocol. Use diagram references where appropriate.
-  write_conclusion_section:
+    - write_test_scripts
+    - execute_test_cases
+    prompt: Configure test environment with specified hardware/software requirements
+      and system parameters.
+  setup_test_data:
     agent: false
-    description: Summarize key advantages and deployment recommendations.
-    name: write_conclusion_section
+    description: Prepare required test materials
+    name: setup_test_data
     nodes_depended_on:
-    - create_blog_post_outline
-    - write_cost_considerations_section
+    - define_test_scope
+    - define_test_case_categories
+    - list_system_parameters
     nodes_dependent_on:
-    - perform_final_review
-    prompt: Write a concluding section (200-word limit) that synthesizes the most
-      important architectural benefits, performance considerations, and use cases
-      discussed in the blog post.
-  write_cost_considerations_section:
+    - execute_test_cases
+    - write_test_scripts
+    prompt: Generate and organize all test data including fixture files, dummy records,
+      and required input parameters.
+  validate_test_outputs:
     agent: false
-    description: Evaluate cost-effectiveness and budgeting strategies for Aurora PostgreSQL
-      deployments.
-    name: write_cost_considerations_section
+    description: Confirm results against expectations
+    name: validate_test_outputs
     nodes_depended_on:
-    - investigate_cost_structure
-    - create_blog_post_outline
-    - write_use_cases_section
+    - execute_test_cases
+    - define_test_criteria
     nodes_dependent_on:
-    - write_conclusion_section
-    prompt: Write a cost analysis section (400-word limit) comparing on-demand vs.
-      reserved pricing models, explaining cost optimization techniques like serverless
-      capabilities and capacity forecasting.
-  write_introduction_section:
+    - generate_test_report
+    prompt: Compare actual outputs with defined criteria to identify pass/fail status
+      and anomalies.
+  write_test_scripts:
     agent: false
-    description: Compose introductory content explaining the purpose and relevance
-      of Aurora PostgreSQL.
-    name: write_introduction_section
+    description: Automate test procedures
+    name: write_test_scripts
     nodes_depended_on:
-    - create_blog_post_outline
+    - design_individual_test_cases
+    - setup_test_data
+    - setup_environment_configuration
     nodes_dependent_on:
-    - write_architecture_overview_section
-    prompt: Write an introduction section for the blog post (300-word limit) that
-      defines AWS Aurora PostgreSQL, explains its significance in the cloud database
-      landscape, and previews the sections to be covered.
-  write_key_components_section:
-    agent: false
-    description: Detail each core component's role in the database system.
-    name: write_key_components_section
-    nodes_depended_on:
-    - identify_key_components
-    - create_blog_post_outline
-    - write_architecture_overview_section
-    nodes_dependent_on:
-    - write_performance_section
-    prompt: Explain the function of key Aurora PostgreSQL components (400-word limit),
-      including DB clusters, instance types (Burstable, Serverless), and storage subsystems.
-      Use code examples where practical.
-  write_performance_section:
-    agent: false
-    description: Analyze performance-related features and benchmarks.
-    name: write_performance_section
-    nodes_depended_on:
-    - explore_performance_features
-    - create_blog_post_outline
-    - write_key_components_section
-    nodes_dependent_on:
-    - write_security_section
-    prompt: Write a performance analysis section (600-word limit) detailing Aurora
-      PostgreSQL's auto-scaling capabilities, query acceleration, and replication
-      strategies. Include benchmark comparison metrics.
-  write_security_section:
-    agent: false
-    description: Comprehensive documentation of security mechanisms and compliance
-      features.
-    name: write_security_section
-    nodes_depended_on:
-    - investigate_security_model
-    - create_blog_post_outline
-    - write_performance_section
-    nodes_dependent_on:
-    - write_use_cases_section
-    prompt: Write a security-focused section (500-word limit) covering encryption,
-      network isolation, IAM integration, and audit logging capabilities in Aurora
-      PostgreSQL. Emphasize AWS-specific security benefits.
-  write_use_cases_section:
-    agent: false
-    description: Practical scenarios where Aurora PostgreSQL is optimal for deployment.
-    name: write_use_cases_section
-    nodes_depended_on:
-    - examine_aurora_postgresql_use_cases
-    - create_blog_post_outline
-    - write_security_section
-    nodes_dependent_on:
-    - write_cost_considerations_section
-    prompt: Write use case section (400-word limit) demonstrating Aurora PostgreSQL's
-      suitability for real-world applications like data warehousing, online transaction
-      processing, and mission-critical workloads.
+    - execute_test_cases
+    prompt: Create executable test scripts for all designed test cases incorporating
+      required data and environment configurations.

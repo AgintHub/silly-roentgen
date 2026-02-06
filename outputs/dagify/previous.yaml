@@ -1,149 +1,233 @@
 dag_type: plain_text
-description: A workflow for writing, designing, and compiling a full book including
-  an outline, five chapters, cover art, blurb, and publication-ready formatting.
-name: create_book
+description: A workflow for drafting an architectural blog post on AWS Aurora PostgreSQL
+  covering architecture, components, use cases, performance, security, and cost.
+name: draft_aurora_postgresql_blog_post
 nodes:
-  compile_final_book:
+  create_architecture_diagrams:
     agent: false
-    description: Assemble all book components into final deliverable
-    name: compile_final_book
+    description: Design visual representations of key architectural concepts.
+    name: create_architecture_diagrams
     nodes_depended_on:
-    - design_book_cover
-    - create_book_blurb
-    - format_chapters
-    nodes_dependent_on: []
-    prompt: Compile the final book by integrating the designed cover, formatted chapters,
-      and book blurb into a completed manuscript file. Ensure all components align
-      correctly in the final publication artifact.
-  create_book_blurb:
+    - research_aurora_postgresql_architecture
+    - write_architecture_overview_section
+    nodes_dependent_on:
+    - perform_final_review
+    prompt: Create 2-3 architectural diagrams showing Aurora PostgreSQL's distributed
+      storage, read replicas, and VPC integration. Provide captions for each diagram.
+  create_blog_post_outline:
     agent: false
-    description: Develop a promotional blurb for the book
-    name: create_book_blurb
+    description: Develop a structural framework for the blog post based on researched
+      elements.
+    name: create_blog_post_outline
     nodes_depended_on:
-    - create_book_outline
-    - write_chapter_1
-    nodes_dependent_on: []
-    prompt: Write a book blurb based on the outline and the first chapter. Highlight
-      the central conflict, main characters, and the book's unique selling points.
-  create_book_outline:
+    - research_aurora_postgresql_architecture
+    - identify_key_components
+    - explore_performance_features
+    - investigate_security_model
+    - examine_aurora_postgresql_use_cases
+    - investigate_cost_structure
+    nodes_dependent_on:
+    - write_introduction_section
+    - write_conclusion_section
+    prompt: Create a blog post outline with standard sections (introduction, architecture,
+      components, performance, security, use cases, cost, and conclusion). Indicate
+      the flow between technical topics.
+  examine_aurora_postgresql_use_cases:
     agent: false
-    description: Develop a detailed chapter-by-chapter outline for the book content
-    name: create_book_outline
+    description: Identify typical deployment scenarios and industry applications where
+      Aurora PostgreSQL excels.
+    name: examine_aurora_postgresql_use_cases
     nodes_depended_on: []
-    nodes_dependent_on: []
-    prompt: Create a detailed outline for the book, including major plot points, character
-      arcs, and thematic elements. Structure the outline into five chapters with brief
-      summaries for each.
-  design_book_cover:
+    nodes_dependent_on:
+    - write_use_cases_section
+    prompt: List 3-5 use cases where AWS Aurora PostgreSQL is recommended over traditional
+      PostgreSQL deployments. Include examples for data warehousing and high-throughput
+      transaction workloads.
+  explore_performance_features:
     agent: false
-    description: Generate a book cover based on content overview
-    name: design_book_cover
-    nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Design a cover for the book based on the provided outline. Include a title,
-      author name, and an image that reflects the book's genre and themes.
-  edit_chapter_1:
+    description: Analyze performance optimization features like read replicas, caching,
+      and SQL query optimization.
+    name: explore_performance_features
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - write_performance_section
+    prompt: List and describe AWS Aurora PostgreSQL's performance-enhancing features
+      such as read replicas, automated scaling, and query acceleration. Use technical
+      details where relevant.
+  format_final_blog_post:
     agent: false
-    description: Refine the first chapter content
-    name: edit_chapter_1
+    description: Apply publishing formatting standards including headings and references.
+    name: format_final_blog_post
     nodes_depended_on:
-    - write_chapter_1
+    - perform_final_review
     nodes_dependent_on: []
-    prompt: Edit the first chapter for grammar, coherence, and alignment with the
-      book's outline. Focus on tightening dialogue and refining character introductions.
-  edit_chapter_2:
+    prompt: Format the blog post with standard markdown headers (H1-H4), code blocks
+      for examples, inline diagrams, and section references. Apply consistent style
+      (bullets, line spacing, code syntax highlighting).
+  identify_key_components:
     agent: false
-    description: Refine the second chapter content
-    name: edit_chapter_2
-    nodes_depended_on:
-    - write_chapter_2
-    nodes_dependent_on: []
-    prompt: Edit the second chapter for consistency in plot progression and character
-      development. Ensure narrative flow connects to the first chapter.
-  edit_chapter_3:
+    description: List key components of AWS Aurora PostgreSQL such as DB cluster,
+      instance types, and storage volumes.
+    name: identify_key_components
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - write_key_components_section
+    prompt: Identify and list the primary components and services within AWS Aurora
+      PostgreSQL (e.g., DB cluster, instance management, storage layer). Use bullet
+      points and avoid technical jargon.
+  investigate_cost_structure:
     agent: false
-    description: Refine the third chapter content
-    name: edit_chapter_3
-    nodes_depended_on:
-    - write_chapter_3
-    nodes_dependent_on: []
-    prompt: Edit the third chapter to resolve conflicts introduced in prior chapters
-      and enhance thematic elements outlined in the book's overall structure.
-  edit_chapter_4:
+    description: Analyze pricing models, including on-demand, reserved instances,
+      and cost optimization strategies.
+    name: investigate_cost_structure
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - write_cost_considerations_section
+    prompt: Summarize AWS Aurora PostgreSQL pricing models, instance-to-cost ratios,
+      storage costs, and recommendations for cost optimization. Use a comparison table
+      if appropriate.
+  investigate_security_model:
     agent: false
-    description: Refine the fourth chapter content
-    name: edit_chapter_4
-    nodes_depended_on:
-    - write_chapter_4
-    nodes_dependent_on: []
-    prompt: Edit the fourth chapter for narrative continuity, ensure character arcs
-      are properly developed, and align story decisions with the overall plot outline.
-  edit_chapter_5:
+    description: Evaluate security features including encryption, IAM integration,
+      and VPC isolation.
+    name: investigate_security_model
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - write_security_section
+    prompt: Detail the security mechanisms in AWS Aurora PostgreSQL, such as encryption
+      at rest, in-transit, IAM authentication, and database activity auditing. Focus
+      on AWS-specific integrations.
+  perform_final_review:
     agent: false
-    description: Refine the fifth chapter content
-    name: edit_chapter_5
+    description: Ensure coherence and technical accuracy across all post sections.
+    name: perform_final_review
     nodes_depended_on:
-    - write_chapter_5
-    nodes_dependent_on: []
-    prompt: Edit the fifth chapter for narrative resolution, character arc completion,
-      and ensure the conclusion satisfies the outlined plot structure.
-  format_chapters:
+    - write_introduction_section
+    - write_architecture_overview_section
+    - write_key_components_section
+    - write_performance_section
+    - write_security_section
+    - write_use_cases_section
+    - write_cost_considerations_section
+    - write_conclusion_section
+    - create_architecture_diagrams
+    nodes_dependent_on:
+    - format_final_blog_post
+    prompt: Review all completed sections (2000-word limit total) for coherence, factual
+      accuracy, and adherence to technical documentation standards. Ensure all code
+      examples and diagrams are properly labeled.
+  research_aurora_postgresql_architecture:
     agent: false
-    description: Prepare chapters for publication
-    name: format_chapters
-    nodes_depended_on:
-    - edit_chapter_1
-    - edit_chapter_2
-    - edit_chapter_3
-    - edit_chapter_4
-    - edit_chapter_5
-    nodes_dependent_on: []
-    prompt: Format the edited chapters into a manuscript suitable for publication.
-      Apply consistent styling for headings, margins, and pagination throughout all
-      chapters.
-  write_chapter_1:
+    description: Research the architecture of AWS Aurora PostgreSQL, including distributed
+      storage, replication, and compatibility.
+    name: research_aurora_postgresql_architecture
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - write_architecture_overview_section
+    prompt: Research the architecture of AWS Aurora PostgreSQL, focusing on how it
+      compares to traditional PostgreSQL and how it integrates with other AWS services.
+      Summarize key architectural concepts in bullet points.
+  write_architecture_overview_section:
     agent: false
-    description: Produce the first chapter content
-    name: write_chapter_1
+    description: Document architectural principles and design patterns specific to
+      Aurora PostgreSQL.
+    name: write_architecture_overview_section
     nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Write the first chapter of the book based on the provided outline. Focus
-      on introducing the main characters and setting the narrative tone.
-  write_chapter_2:
+    - research_aurora_postgresql_architecture
+    - create_blog_post_outline
+    nodes_dependent_on:
+    - write_key_components_section
+    prompt: Write a technical overview (500-word limit) of Aurora PostgreSQL architecture,
+      including multi-AZ deployment, storage disaggregation, and compatibility with
+      PostgreSQL wire protocol. Use diagram references where appropriate.
+  write_conclusion_section:
     agent: false
-    description: Develop the second chapter content
-    name: write_chapter_2
+    description: Summarize key advantages and deployment recommendations.
+    name: write_conclusion_section
     nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Write the second chapter of the book based on the provided outline. Continue
-      developing the plot and character relationships.
-  write_chapter_3:
+    - create_blog_post_outline
+    - write_cost_considerations_section
+    nodes_dependent_on:
+    - perform_final_review
+    prompt: Write a concluding section (200-word limit) that synthesizes the most
+      important architectural benefits, performance considerations, and use cases
+      discussed in the blog post.
+  write_cost_considerations_section:
     agent: false
-    description: Produce the third chapter content
-    name: write_chapter_3
+    description: Evaluate cost-effectiveness and budgeting strategies for Aurora PostgreSQL
+      deployments.
+    name: write_cost_considerations_section
     nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Write the third chapter of the book based on the provided outline. Introduce
-      conflicts and deepen character arcs.
-  write_chapter_4:
+    - investigate_cost_structure
+    - create_blog_post_outline
+    - write_use_cases_section
+    nodes_dependent_on:
+    - write_conclusion_section
+    prompt: Write a cost analysis section (400-word limit) comparing on-demand vs.
+      reserved pricing models, explaining cost optimization techniques like serverless
+      capabilities and capacity forecasting.
+  write_introduction_section:
     agent: false
-    description: Develop the fourth chapter content
-    name: write_chapter_4
+    description: Compose introductory content explaining the purpose and relevance
+      of Aurora PostgreSQL.
+    name: write_introduction_section
     nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Write the fourth chapter of the book based on the provided outline. Develop
-      plot twists and escalate character arcs.
-  write_chapter_5:
+    - create_blog_post_outline
+    nodes_dependent_on:
+    - write_architecture_overview_section
+    prompt: Write an introduction section for the blog post (300-word limit) that
+      defines AWS Aurora PostgreSQL, explains its significance in the cloud database
+      landscape, and previews the sections to be covered.
+  write_key_components_section:
     agent: false
-    description: Produce the fifth chapter content
-    name: write_chapter_5
+    description: Detail each core component's role in the database system.
+    name: write_key_components_section
     nodes_depended_on:
-    - create_book_outline
-    nodes_dependent_on: []
-    prompt: Write the fifth chapter of the book based on the provided outline. Conclude
-      the story with a satisfying ending.
+    - identify_key_components
+    - create_blog_post_outline
+    - write_architecture_overview_section
+    nodes_dependent_on:
+    - write_performance_section
+    prompt: Explain the function of key Aurora PostgreSQL components (400-word limit),
+      including DB clusters, instance types (Burstable, Serverless), and storage subsystems.
+      Use code examples where practical.
+  write_performance_section:
+    agent: false
+    description: Analyze performance-related features and benchmarks.
+    name: write_performance_section
+    nodes_depended_on:
+    - explore_performance_features
+    - create_blog_post_outline
+    - write_key_components_section
+    nodes_dependent_on:
+    - write_security_section
+    prompt: Write a performance analysis section (600-word limit) detailing Aurora
+      PostgreSQL's auto-scaling capabilities, query acceleration, and replication
+      strategies. Include benchmark comparison metrics.
+  write_security_section:
+    agent: false
+    description: Comprehensive documentation of security mechanisms and compliance
+      features.
+    name: write_security_section
+    nodes_depended_on:
+    - investigate_security_model
+    - create_blog_post_outline
+    - write_performance_section
+    nodes_dependent_on:
+    - write_use_cases_section
+    prompt: Write a security-focused section (500-word limit) covering encryption,
+      network isolation, IAM integration, and audit logging capabilities in Aurora
+      PostgreSQL. Emphasize AWS-specific security benefits.
+  write_use_cases_section:
+    agent: false
+    description: Practical scenarios where Aurora PostgreSQL is optimal for deployment.
+    name: write_use_cases_section
+    nodes_depended_on:
+    - examine_aurora_postgresql_use_cases
+    - create_blog_post_outline
+    - write_security_section
+    nodes_dependent_on:
+    - write_cost_considerations_section
+    prompt: Write use case section (400-word limit) demonstrating Aurora PostgreSQL's
+      suitability for real-world applications like data warehousing, online transaction
+      processing, and mission-critical workloads.

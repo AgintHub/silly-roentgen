@@ -1,7 +1,5 @@
-dag_type: plain_text
-description: Builds a WebAssembly compiler by sequentially implementing lexical analysis,
-  parsing, semantic analysis, intermediate representation, optimization, and WebAssembly
-  code generation, with parallel execution of implementation and testing phases.
+dag_type: typed
+description: Generated workflow from UI.
 name: write_web_assembly_compiler
 nodes:
   definecompilerrequirements:
@@ -10,25 +8,42 @@ nodes:
       input language, supported features, and expected output format.
     name: definecompilerrequirements
     nodes_depended_on: []
-    nodes_dependent_on:
-    - designcompilerarchitecture
+    nodes_dependent_on: []
+    output_structure:
+    - description: The source programming languages supported by the compiler (e.g.,
+        Rust, C++, AssemblyScript).
+      key: input_language
+      type: List[str]
+    - description: The target WebAssembly specification version (e.g., '1.0', '2.0').
+      key: wasm_version
+      type: str
+    - description: Primary features and capabilities that the compiler must support
+        (e.g., multithreading, SIMD, garbage collection).
+      key: key_features
+      type: List[str]
+    - description: The expected output format of the compiler (e.g., binary .wasm,
+        text .wat, module metadata).
+      key: output_format
+      type: str
     prompt: Outline the specific requirements for a WebAssembly compiler, including
       source language (e.g., Rust, C++), target WebAssembly version, and key features
       to implement. Focus only on defining requirements, not implementation.
   designcompilerarchitecture:
     agent: false
-    description: Create an architectural blueprint for the WebAssembly compiler components.
+    description: Creates a high‑level blueprint of the compiler, listing the main
+      component modules and the key features each module must support.
     name: designcompilerarchitecture
     nodes_depended_on:
     - definecompilerrequirements
-    nodes_dependent_on:
-    - implementlexer
-    - implementparser
-    - implementsemanticanalyzer
-    - implementirgenerator
-    - implementoptimizer
-    - implementwebassemblygenerator
-    - implementlinker
+    nodes_dependent_on: []
+    output_structure:
+    - description: Names of the top‑level compiler modules in the architecture.
+      key: module_names
+      type: List[str]
+    - description: Key features or capabilities that each module must provide to meet
+        the compiler requirements.
+      key: required_features
+      type: List[str]
     prompt: Design the architectural structure of the WebAssembly compiler, specifying
       modules for lexical analysis, parsing, semantic analysis, IR generation, optimization,
       code generation, and linking. Focus only on modular design not implementation
@@ -40,30 +55,68 @@ nodes:
     nodes_depended_on:
     - validatecompiler
     nodes_dependent_on: []
+    output_structure:
+    - description: The generated technical documentation content
+      key: documentation_content
+      type: str
+    - description: Description of the compiler architecture
+      key: compiler_architecture
+      type: str
+    - description: API usage instructions
+      key: api_usage
+      type: str
+    - description: Implementation details of the compiler
+      key: implementation_details
+      type: str
+    - description: List of usage examples
+      key: usage_examples
+      type: List[str]
     prompt: Produce comprehensive documentation covering the compiler architecture,
       API usage, implementation details, and usage examples.
   implementirgenerator:
     agent: false
-    description: Convert validated ASTs into an intermediate representation format.
+    description: Convert validated ASTs into an intermediate representation (IR) format
+      suitable for optimization and code generation.
     name: implementirgenerator
     nodes_depended_on:
     - designcompilerarchitecture
     - implementsemanticanalyzer
-    nodes_dependent_on:
-    - implementoptimizer
-    - implementwebassemblygenerator
-    - writeirunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: The type/category of the IR block (e.g., 'assign', 'binary_op',
+        'func_call', 'loop').
+      key: ir_block_type
+      type: str
+    - description: Unique identifier for the IR block within the module.
+      key: ir_block_id
+      type: int
+    - description: List of operand identifiers or literal values used by the IR block.
+      key: operands
+      type: List[str]
+    - description: Identifier for the result value produced by the IR block, if any.
+      key: result
+      type: str
+    - description: Optional human‑readable comment describing the purpose of the IR
+        block.
+      key: comment
+      type: str
     prompt: Based on the compiler architecture and semantic analysis results, implement
       conversion of validated ASTs into a structured intermediate representation format.
   implementlexer:
     agent: false
-    description: Implement the lexical analyzer/tokenizer for the source language.
+    description: This node implements the lexer/tokenizer for the source language,
+      producing a sequence of tokens from raw source code.
     name: implementlexer
     nodes_depended_on:
     - designcompilerarchitecture
-    nodes_dependent_on:
-    - implementparser
-    - writelexerunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of token strings extracted from the source code.
+      key: tokens
+      type: List[str]
+    - description: Total number of tokens produced.
+      key: token_count
+      type: int
     prompt: Based on the defined compiler architecture, implement the lexical analysis
       module for the source language. Focus only on tokenization functionality without
       downstream processing.
@@ -74,8 +127,18 @@ nodes:
     nodes_depended_on:
     - designcompilerarchitecture
     - implementwebassemblygenerator
-    nodes_dependent_on:
-    - writelinekerunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Path or identifier of the final linked WebAssembly module.
+      key: linked_module
+      type: str
+    - description: List of symbols that could not be resolved during linking.
+      key: unresolved_symbols
+      type: List[str]
+    - description: Indicates whether linking completed successfully without unresolved
+        symbols.
+      key: success
+      type: bool
     prompt: Based on the compiler architecture and WebAssembly generator output, implement
       symbol resolution and final linking of the generated WebAssembly module.
   implementoptimizer:
@@ -85,8 +148,21 @@ nodes:
     nodes_depended_on:
     - designcompilerarchitecture
     - implementirgenerator
-    nodes_dependent_on:
-    - writeoptimizerunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: List of optimization pass names that were executed.
+      key: passes_applied
+      type: List[str]
+    - description: Total number of optimization passes executed.
+      key: num_passes
+      type: int
+    - description: Indicates whether all optimization passes completed without errors.
+      key: optimization_successful
+      type: bool
+    - description: A concise textual summary of the optimized intermediate representation
+        (e.g., key metrics or changes).
+      key: optimized_ir_summary
+      type: str
     prompt: Based on the compiler architecture and available IR generator, implement
       optimization passes such as dead code elimination and constant folding.
   implementparser:
@@ -96,22 +172,43 @@ nodes:
     nodes_depended_on:
     - designcompilerarchitecture
     - implementlexer
-    nodes_dependent_on:
-    - implementsemanticanalyzer
-    - writeparserunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: String representation of the abstract syntax tree
+      key: abstract_syntax_tree
+      type: str
+    - description: List of syntax errors encountered during parsing
+      key: syntax_errors
+      type: List[str]
+    - description: Whether the input syntax is valid
+      key: is_valid_syntax
+      type: bool
     prompt: Based on the defined architecture and available lexer implementation,
       create a parser that constructs abstract syntax trees. Focus only on syntax
       validation and AST generation.
   implementsemanticanalyzer:
     agent: false
-    description: Implement semantic analysis of parsed source code structures.
+    description: Perform semantic analysis of parsed source code, validating type
+      correctness and building a symbol table for identifiers.
     name: implementsemanticanalyzer
     nodes_depended_on:
     - designcompilerarchitecture
     - implementparser
-    nodes_dependent_on:
-    - implementirgenerator
-    - writesemanticunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: List of semantic error messages detected during analysis
+      key: error_messages
+      type: List[str]
+    - description: True if any semantic errors were found, otherwise False
+      key: has_errors
+      type: bool
+    - description: Number of semantic errors detected
+      key: error_count
+      type: int
+    - description: Names of identifiers successfully resolved and added to the symbol
+        table
+      key: symbol_table_entries
+      type: List[str]
     prompt: Based on the compiler architecture and available parser, implement semantic
       validation of abstract syntax trees including type checking and symbol resolution.
   implementwebassemblygenerator:
@@ -121,14 +218,25 @@ nodes:
     nodes_depended_on:
     - designcompilerarchitecture
     - implementirgenerator
-    nodes_dependent_on:
-    - implementlinker
-    - writecodegenunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: The generated WebAssembly bytecode as a string.
+      key: wasm_bytecode
+      type: str
+    - description: The version of the intermediate representation used for code generation.
+      key: ir_version
+      type: str
+    - description: A list of error messages encountered during code generation.
+      key: errors
+      type: List[str]
+    - description: Whether the code generation was successful.
+      key: success
+      type: bool
     prompt: Based on the compiler architecture and optimized IR, implement code generation
       targeting the WebAssembly binary format specifications.
   runallunittests:
     agent: false
-    description: Execute all unit tests across compiler components.
+    description: Execute all unit tests across compiler components and report results.
     name: runallunittests
     nodes_depended_on:
     - writelexerunittests
@@ -138,8 +246,17 @@ nodes:
     - writeoptimizerunittests
     - writecodegenunittests
     - writelinekerunittests
-    nodes_dependent_on:
-    - validatecompiler
+    nodes_dependent_on: []
+    output_structure:
+    - description: Name of the module whose tests were run.
+      key: module_name
+      type: str
+    - description: Whether all tests in the module passed.
+      key: passed
+      type: bool
+    - description: List of error messages for failed tests, empty if passed.
+      key: error_messages
+      type: List[str]
     prompt: Execute all implemented unit tests for lexical analysis, parsing, semantic
       analysis, IR generation, optimization, WebAssembly generation, and linking modules.
   validatecompiler:
@@ -148,48 +265,105 @@ nodes:
     name: validatecompiler
     nodes_depended_on:
     - runallunittests
-    nodes_dependent_on:
-    - generatedocumentation
+    nodes_dependent_on: []
+    output_structure:
+    - description: Whether all integration tests passed successfully.
+      key: test_passed
+      type: bool
+    - description: Number of integration tests that passed.
+      key: passed_tests
+      type: int
+    - description: Number of integration tests that failed.
+      key: failed_tests
+      type: int
+    - description: List of detailed test case results and any error messages.
+      key: test_report
+      type: List[str]
     prompt: Perform end-to-end testing of the complete compiler workflow using sample
       source programs to validate correct WebAssembly output generation.
   writecodegenunittests:
     agent: false
-    description: Create unit tests for WebAssembly code generation.
+    description: Generate unit tests that verify the WebAssembly code generator correctly
+      translates optimized intermediate representation into valid WebAssembly bytecode.
     name: writecodegenunittests
     nodes_depended_on:
     - implementwebassemblygenerator
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Names of individual unit tests created for the WebAssembly code
+        generator.
+      key: test_names
+      type: List[str]
+    - description: Total number of tests that passed successfully.
+      key: pass_counts
+      type: int
+    - description: Total number of tests that failed during execution.
+      key: fail_counts
+      type: int
     prompt: Create comprehensive unit tests for the WebAssembly code generator to
       validate proper translation of optimized IR into WebAssembly bytecode.
   writeirunittests:
     agent: false
-    description: Create unit tests for the intermediate representation generator.
+    description: Generate and execute unit tests for the IR generator, comparing generated
+      IR against expected IR for a variety of input ASTs.
     name: writeirunittests
     nodes_depended_on:
     - implementirgenerator
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Name of the unit test case
+      key: test_name
+      type: str
+    - description: String representation of the input AST used in the test
+      key: input_ast_repr
+      type: str
+    - description: String representation of the expected IR output
+      key: expected_ir_repr
+      type: str
+    - description: Whether the test passed or failed
+      key: test_passed
+      type: bool
+    - description: Error message if the test failed; empty string if passed
+      key: error_message
+      type: str
     prompt: Create comprehensive unit tests for the IR generator to validate correct
       translation of validated ASTs into intermediate representations.
   writelexerunittests:
     agent: false
-    description: Create unit tests for the lexical analysis component.
+    description: Generate a set of lexical analysis unit tests, including input strings,
+      expected token types, and pass/fail status.
     name: writelexerunittests
     nodes_depended_on:
     - implementlexer
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: List of input strings to be tokenized
+      key: test_cases
+      type: List[str]
+    - description: Corresponding expected sequence of token types for each test case
+      key: expected_token_sequences
+      type: List[str]
+    - description: Overall pass status of the unit test suite
+      key: is_passed
+      type: bool
     prompt: Create comprehensive unit tests for the lexical analyzer module to verify
       tokenization correctness across valid and invalid input cases.
   writelinekerunittests:
     agent: false
-    description: Create unit tests for the linker implementation.
+    description: Generate a suite of unit tests for the WebAssembly linker, ensuring
+      correct symbol resolution, dependency handling, and final module linkage.
     name: writelinekerunittests
     nodes_depended_on:
     - implementlinker
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Names of individual unit tests created for the linker.
+      key: test_names
+      type: List[str]
+    - description: Boolean indicating whether each corresponding test passed (true)
+        or failed (false).
+      key: pass_status
+      type: List[bool]
     prompt: Create comprehensive unit tests for the linker module to validate correct
       symbol resolution and module linkage.
   writeoptimizerunittests:
@@ -198,8 +372,18 @@ nodes:
     name: writeoptimizerunittests
     nodes_depended_on:
     - implementoptimizer
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: List of test case names for the optimization module
+      key: test_cases
+      type: List[str]
+    - description: List of expected output values for each test case
+      key: expected_outputs
+      type: List[str]
+    - description: List of test results indicating whether each test case passed or
+        failed
+      key: test_results
+      type: List[bool]
     prompt: Create comprehensive unit tests for the optimization module to verify
       correctness of transformations on intermediate representations.
   writeparserunittests:
@@ -208,17 +392,39 @@ nodes:
     name: writeparserunittests
     nodes_depended_on:
     - implementparser
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: List of test case names for parser unit tests
+      key: test_cases
+      type: List[str]
+    - description: List of code snippets for parser unit tests
+      key: test_code
+      type: List[str]
+    - description: List of expected boolean outputs for parser unit tests
+      key: expected_outputs
+      type: List[bool]
     prompt: Create comprehensive unit tests for the parser module to validate correct
       AST construction from various token sequences.
   writesemanticunittests:
     agent: false
-    description: Create unit tests for the semantic analyzer.
+    description: Generate a set of unit tests for the semantic analyzer, covering
+      type correctness, symbol resolution, and error handling scenarios.
     name: writesemanticunittests
     nodes_depended_on:
     - implementsemanticanalyzer
-    nodes_dependent_on:
-    - runallunittests
+    nodes_dependent_on: []
+    output_structure:
+    - description: Names of individual unit test cases
+      key: test_cases
+      type: List[str]
+    - description: Number of test cases that passed
+      key: passed
+      type: int
+    - description: Number of test cases that failed
+      key: failed
+      type: int
+    - description: Detailed error messages for failed test cases
+      key: error_messages
+      type: List[str]
     prompt: Create comprehensive unit tests for the semantic analysis module to verify
       type checking and symbol resolution.

@@ -1,53 +1,80 @@
 dag_type: plain_text
-description: A simple workflow to perform a basic test operation and report results.
-name: perform_basic_test
+description: A workflow that gathers test parameters, sets up the environment, runs
+  tests, analyzes results, generates a report, and sends notifications based on success
+  or failure.
+name: generic_test_workflow
 nodes:
-  analyze_test_outcome:
+  analyze_results:
     agent: false
-    description: Evaluate the collected results against expected criteria to determine
-      test success or failure.
-    name: analyze_test_outcome
+    description: Determine pass/fail status from test output.
+    name: analyze_results
     nodes_depended_on:
-    - collect_test_results
+    - run_tests
     nodes_dependent_on:
-    - report_test_summary
-    prompt: Analyze the test results to assess if the test passed or failed based
-      on defined criteria. Provide a clear determination.
-  collect_test_results:
+    - generate_report
+    - notify_success
+    - notify_failure
+    prompt: Analyze the test output and exit code to determine whether all tests passed.
+      Produce a summary with total tests, passed, failed, and a boolean indicating
+      overall success.
+  gather_test_parameters:
     agent: false
-    description: Gather and document the output or outcome of the test execution.
-    name: collect_test_results
-    nodes_depended_on:
-    - execute_test_action
-    nodes_dependent_on:
-    - analyze_test_outcome
-    prompt: Collect the raw results from the test action. Record all observations
-      clearly and unambiguously.
-  execute_test_action:
-    agent: false
-    description: Perform the actual test action or operation as defined.
-    name: execute_test_action
-    nodes_depended_on:
-    - initialize_test_environment
-    nodes_dependent_on:
-    - collect_test_results
-    prompt: Carry out the test action precisely as specified, using only the prepared
-      environment and inputs provided. Do not reference any other information.
-  initialize_test_environment:
-    agent: false
-    description: Set up all necessary conditions and parameters to start the test.
-    name: initialize_test_environment
+    description: Collect test parameters from configuration or environment variables.
+    name: gather_test_parameters
     nodes_depended_on: []
     nodes_dependent_on:
-    - execute_test_action
-    prompt: Prepare the environment and any necessary parameters required to perform
-      the test. Confirm readiness without assuming prior context.
-  report_test_summary:
+    - setup_environment
+    prompt: Retrieve test configuration settings (e.g., test directory, test command,
+      environment variables) from a predefined config file or environment variables.
+      Output the parameters in JSON format.
+  generate_report:
     agent: false
-    description: Summarize the entire test process and report the final outcome clearly.
-    name: report_test_summary
+    description: Create a report summarizing the test results.
+    name: generate_report
     nodes_depended_on:
-    - analyze_test_outcome
+    - analyze_results
     nodes_dependent_on: []
-    prompt: Compose a concise summary of the test purpose, execution, and results,
-      including whether the test passed or failed.
+    prompt: Using the analysis from analyze_results, produce a concise test report.
+      Include counts, pass/fail summary, and key errors. Output the report as a plain
+      text block.
+  notify_failure:
+    agent: false
+    description: Send a notification if tests failed.
+    name: notify_failure
+    nodes_depended_on:
+    - analyze_results
+    - generate_report
+    nodes_dependent_on: []
+    prompt: If the overall test success is false, send a failure notification with
+      the test report and details. Output a confirmation message.
+  notify_success:
+    agent: false
+    description: Send a notification if tests passed.
+    name: notify_success
+    nodes_depended_on:
+    - analyze_results
+    - generate_report
+    nodes_dependent_on: []
+    prompt: If the overall test success is true, send a success notification (e.g.,
+      email or message) with the test report included. Output a confirmation message.
+  run_tests:
+    agent: false
+    description: Execute the test suite.
+    name: run_tests
+    nodes_depended_on:
+    - setup_environment
+    nodes_dependent_on:
+    - analyze_results
+    prompt: Run the test command specified in the gathered parameters. Capture the
+      test output (stdout/stderr) and exit code. Return the raw output and exit code.
+  setup_environment:
+    agent: false
+    description: Set up the test environment by installing dependencies.
+    name: setup_environment
+    nodes_depended_on:
+    - gather_test_parameters
+    nodes_dependent_on:
+    - run_tests
+    prompt: Using the parameters from gather_test_parameters, install required dependencies
+      (e.g., via pip, npm, or system package manager). Ensure the environment is ready
+      for test execution. Output success or error status.

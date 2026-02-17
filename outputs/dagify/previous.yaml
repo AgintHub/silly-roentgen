@@ -1,67 +1,34 @@
 dag_type: plain_text
-description: A fundamental test workflow that executes initialization, parallel test
-  execution, validation, and reporting in a structured DAG
-name: basic_test_workflow
+description: A workflow that constructs a complete book of poetry from concept to
+  distribution, handling theme definition, poem writing, editing, design, formatting,
+  and marketing.
+name: create_book_of_poetry
 nodes:
-  execute_system_checks:
+  create_poem_collection_template:
     agent: false
-    description: Validate end-to-end system functionality
-    name: execute_system_checks
+    description: Creates a consistent structure and style guidelines for each poem
+      in the collection.
+    name: create_poem_collection_template
     nodes_depended_on:
-    - initialize_test_environment
+    - define_book_scope
     nodes_dependent_on:
-    - validate_test_results
-    prompt: Run system-level test scenarios simulating real-world usage patterns across
-      all interconnected components.
-  generate_summary_report:
+    - write_poem_1
+    - write_poem_2
+    - write_poem_3
+    - write_poem_4
+    - write_poem_5
+    prompt: 'Based on the defined scope, outline a template for each poem: maximum
+      line count, rhyme scheme (if any), style guidelines, and any required metadata
+      (title, subtitle). Provide the template in a table format.'
+  define_book_scope:
     agent: false
-    description: Produce consolidated test execution documentation
-    name: generate_summary_report
-    nodes_depended_on:
-    - validate_test_results
-    nodes_dependent_on: []
-    prompt: Compile structured test summary including pass rates, error distribution,
-      and system performance metrics.
-  initialize_test_environment:
-    agent: false
-    description: Set up required testing infrastructure and dependencies
-    name: initialize_test_environment
+    description: Establishes the scope and core characteristics of the poetry book.
+    name: define_book_scope
     nodes_depended_on: []
     nodes_dependent_on:
-    - run_unit_tests
-    - run_integration_tests
-    - execute_system_checks
-    prompt: Initialize test environment by installing required dependencies and launching
-      test infrastructure. Confirm availability of testing frameworks and mock services.
-  run_integration_tests:
-    agent: false
-    description: Verify component interaction correctness
-    name: run_integration_tests
-    nodes_depended_on:
-    - initialize_test_environment
-    nodes_dependent_on:
-    - validate_test_results
-    prompt: Execute integration tests between core system components. Test data flow
-      between services and interface compatibility.
-  run_unit_tests:
-    agent: false
-    description: Execute isolated unit test cases
-    name: run_unit_tests
-    nodes_depended_on:
-    - initialize_test_environment
-    nodes_dependent_on:
-    - validate_test_results
-    prompt: Run all unit tests using standard test framework. Focus on individual
-      function/module validation with mocked dependencies.
-  validate_test_results:
-    agent: false
-    description: Analyze test outcomes for pass/fail status
-    name: validate_test_results
-    nodes_depended_on:
-    - run_unit_tests
-    - run_integration_tests
-    - execute_system_checks
-    nodes_dependent_on:
-    - generate_summary_report
-    prompt: Aggregate test execution results from all test categories. Identify failure
-      patterns and validate against quality criteria.
+    - create_poem_collection_template
+    - design_cover
+    - marketing_plan
+    prompt: 'Identify the key parameters for the poetry book: number of poems, central
+      theme, target audience, and intended publishing format. Provide a concise summary
+      with bullet points.'

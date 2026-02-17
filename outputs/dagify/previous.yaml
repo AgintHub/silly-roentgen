@@ -1,159 +1,152 @@
 dag_type: plain_text
-description: A detailed workflow for writing a screenplay for a film about vampires
-  and elves starring Chris Pratt, including concept development, character creation,
-  plot structuring, scriptwriting of acts and scenes, and integration of starring
-  role.
-name: screenplay_vampires_elves_chrispratt
+description: A workflow for writing a novel styled as Shaq's diary, including concept
+  development, character and setting creation, plot structuring, diary entries by
+  chapters, and final compilation.
+name: write_shaqqs_diary_novel
 nodes:
-  compile_full_screenplay:
+  brainstorm_main_themes:
     agent: false
-    description: Combine all acts and scenes into a complete, formatted screenplay
-      document.
-    name: compile_full_screenplay
+    description: Identify key themes and topics to weave throughout the diary novel.
+    name: brainstorm_main_themes
     nodes_depended_on:
-    - write_act_1_scenes
-    - write_act_2_scenes
-    - write_act_3_scenes
+    - define_novel_perspective_and_tone
+    nodes_dependent_on:
+    - outline_novel_plot_structure
+    prompt: List main themes and subjects (e.g., fame, sports, family, personal growth)
+      that will be explored in Shaq's diary novel.
+  compile_full_novel_draft:
+    agent: false
+    description: Combine all chapters' diary entries into a complete novel draft.
+    name: compile_full_novel_draft
+    nodes_depended_on:
+    - write_chapter_1_entries
+    - write_chapter_2_entries
+    - write_chapter_3_entries
+    - write_chapter_4_entries
+    - write_chapter_5_entries
+    nodes_dependent_on:
+    - proofread_and_edit_draft
+    prompt: Combine the diary entries from all chapters into one complete, smoothly
+      flowing novel draft, keeping diary style consistent throughout.
+  create_novel_setting:
+    agent: false
+    description: Define the primary settings and timeline of the novel.
+    name: create_novel_setting
+    nodes_depended_on:
+    - define_novel_perspective_and_tone
+    nodes_dependent_on:
+    - outline_novel_plot_structure
+    prompt: Describe the main settings (locations and timeframes) where Shaq's diary
+      entries take place. Include relevant background details for vivid scene depiction.
+  define_novel_perspective_and_tone:
+    agent: false
+    description: Define the narrative perspective and tone of Shaq's diary novel.
+    name: define_novel_perspective_and_tone
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - develop_shaqq_character_profile
+    - create_novel_setting
+    - brainstorm_main_themes
+    prompt: Determine the narrative perspective (first-person diary style) and the
+      tone (e.g., humorous, reflective, casual) for the novel about Shaq's diary.
+      Provide a clear statement summarizing them.
+  develop_shaqq_character_profile:
+    agent: false
+    description: Create a detailed character profile for Shaq as the diary narrator.
+    name: develop_shaqq_character_profile
+    nodes_depended_on:
+    - define_novel_perspective_and_tone
+    nodes_dependent_on:
+    - outline_novel_plot_structure
+    prompt: Develop a detailed character profile for Shaq as the diary narrator, focusing
+      on personality traits, voice style, and unique mannerisms to reflect in diary
+      entries.
+  generate_novel_title_and_blurb:
+    agent: false
+    description: Create a compelling title and a brief blurb summarizing the novel.
+    name: generate_novel_title_and_blurb
+    nodes_depended_on:
+    - proofread_and_edit_draft
     nodes_dependent_on: []
-    prompt: Combine the Act 1, Act 2, and Act 3 scenes into a fully formatted screenplay
-      draft for the vampire and elf film starring Chris Pratt. Ensure consistency
-      and proper screenplay format.
-  define_film_genre_and_tone:
+    prompt: Based on the final edited draft, generate a creative title and a concise
+      blurb that summarizes the essence of Shaq's diary novel appealingly.
+  outline_novel_plot_structure:
     agent: false
-    description: Decide the specific film genre (e.g., fantasy, horror, action-comedy)
-      and overall tone for the screenplay featuring vampires and elves.
-    name: define_film_genre_and_tone
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - outline_basic_plot
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    - determine_chris_pratt_character_profile
-    prompt: Specify the film genre and tone for a screenplay featuring vampires and
-      elves, such as dark fantasy, action, adventure, or comedy. Describe the mood
-      and style in 2-3 sentences.
-  determine_chris_pratt_character_profile:
-    agent: false
-    description: Define the character that Chris Pratt will portray in the screenplay,
-      including role, characteristics, and significance.
-    name: determine_chris_pratt_character_profile
+    description: Create a chapter-by-chapter plot outline for the diary novel.
+    name: outline_novel_plot_structure
     nodes_depended_on:
-    - define_film_genre_and_tone
-    - establish_film_setting
+    - develop_shaqq_character_profile
+    - create_novel_setting
+    - brainstorm_main_themes
     nodes_dependent_on:
-    - outline_basic_plot
-    - write_act_1_scenes
-    - write_act_2_scenes
-    - write_act_3_scenes
-    prompt: Create a detailed character profile for the character played by Chris
-      Pratt. Include role in story, personality traits, relationships with vampires
-      and elves, and overall importance.
-  develop_elf_character_details:
+    - write_chapter_1_entries
+    - write_chapter_2_entries
+    - write_chapter_3_entries
+    - write_chapter_4_entries
+    - write_chapter_5_entries
+    prompt: Develop a detailed chapter-by-chapter plot outline focusing on progression
+      and key diary events reflecting Shaq's experiences and themes identified.
+  proofread_and_edit_draft:
     agent: false
-    description: Create detailed traits, motivations, and background for key elf characters.
-    name: develop_elf_character_details
+    description: Proofread and edit the compiled novel draft for style, consistency,
+      grammar, and coherence.
+    name: proofread_and_edit_draft
     nodes_depended_on:
-    - define_film_genre_and_tone
-    - establish_film_setting
+    - compile_full_novel_draft
     nodes_dependent_on:
-    - outline_basic_plot
-    - write_act_1_scenes
-    - write_act_2_scenes
-    - write_act_3_scenes
-    prompt: Generate detailed character profiles for the main elf characters, including
-      personality traits, strengths, weaknesses, backgrounds, and motivations matching
-      the film's genre and setting.
-  develop_vampire_character_details:
+    - generate_novel_title_and_blurb
+    prompt: Proofread the full novel draft of Shaq's diary. Edit for grammar, stylistic
+      consistency, narrative flow, and character voice. Provide an improved, polished
+      draft.
+  write_chapter_1_entries:
     agent: false
-    description: Create detailed traits, motivations, and background for key vampire
-      characters.
-    name: develop_vampire_character_details
+    description: Write diary entries composing chapter 1 based on the outline and
+      character profile.
+    name: write_chapter_1_entries
     nodes_depended_on:
-    - define_film_genre_and_tone
-    - establish_film_setting
-    nodes_dependent_on:
-    - outline_basic_plot
-    - write_act_1_scenes
-    - write_act_2_scenes
-    - write_act_3_scenes
-    prompt: Generate detailed character profiles for the main vampire characters,
-      including personality traits, strengths, weaknesses, backgrounds, and motivations
-      consistent with the film's genre and setting.
-  establish_film_setting:
+    - outline_novel_plot_structure
+    nodes_dependent_on: []
+    prompt: Compose the diary entries for chapter 1 of Shaq's diary novel. Emulate
+      the established character voice, settings, and plot events specified in the
+      outline.
+  write_chapter_2_entries:
     agent: false
-    description: Create the main setting(s) and world-building details where the vampires
-      and elves story takes place.
-    name: establish_film_setting
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - outline_basic_plot
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    prompt: Describe the primary settings for the film about vampires and elves, including
-      the world type (e.g., medieval fantasy realm, modern city, dystopian future),
-      environment, and relevant lore in 3-5 sentences.
-  outline_basic_plot:
-    agent: false
-    description: Develop a high-level plot outline integrating vampires, elves, and
-      Chris Pratt's character, structured around a three-act story arc.
-    name: outline_basic_plot
+    description: Write diary entries composing chapter 2 based on the outline and
+      character profile.
+    name: write_chapter_2_entries
     nodes_depended_on:
-    - define_film_genre_and_tone
-    - establish_film_setting
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    - determine_chris_pratt_character_profile
-    nodes_dependent_on:
-    - write_act_1_scenes
-    - write_act_2_scenes
-    - write_act_3_scenes
-    prompt: Create a three-act plot outline for a screenplay about vampires, elves,
-      and Chris Pratt's character. Define main conflicts, plot points, and story progression
-      at a high level.
-  write_act_1_scenes:
+    - outline_novel_plot_structure
+    nodes_dependent_on: []
+    prompt: Compose the diary entries for chapter 2 of Shaq's diary novel following
+      the plot outline and maintaining character voice and tone.
+  write_chapter_3_entries:
     agent: false
-    description: Write detailed scenes for Act 1, establishing setting, characters,
-      and initial conflict.
-    name: write_act_1_scenes
+    description: Write diary entries composing chapter 3 based on the outline and
+      character profile.
+    name: write_chapter_3_entries
     nodes_depended_on:
-    - outline_basic_plot
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    - determine_chris_pratt_character_profile
-    nodes_dependent_on:
-    - write_act_2_scenes
-    prompt: Write the screenplay scenes composing Act 1, introducing the world, main
-      characters including Chris Pratt's, and the central conflict involving vampires
-      and elves.
-  write_act_2_scenes:
+    - outline_novel_plot_structure
+    nodes_dependent_on: []
+    prompt: Compose the diary entries for chapter 3 of Shaq's diary novel consistent
+      with the plot outline, character voice, and established tone.
+  write_chapter_4_entries:
     agent: false
-    description: Write detailed scenes for Act 2, developing conflict and character
-      arcs.
-    name: write_act_2_scenes
+    description: Write diary entries composing chapter 4 based on the outline and
+      character profile.
+    name: write_chapter_4_entries
     nodes_depended_on:
-    - write_act_1_scenes
-    - outline_basic_plot
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    - determine_chris_pratt_character_profile
-    nodes_dependent_on:
-    - write_act_3_scenes
-    prompt: Write the screenplay scenes composing Act 2, advancing the story's conflict
-      and relationships, deepening the roles of vampires, elves, and Chris Pratt's
-      character.
-  write_act_3_scenes:
+    - outline_novel_plot_structure
+    nodes_dependent_on: []
+    prompt: Compose the diary entries for chapter 4 of Shaq's diary novel using the
+      plot outline and established narrative style.
+  write_chapter_5_entries:
     agent: false
-    description: Write detailed scenes for Act 3, resolving conflicts and concluding
-      the story.
-    name: write_act_3_scenes
+    description: Write diary entries composing chapter 5 based on the outline and
+      character profile.
+    name: write_chapter_5_entries
     nodes_depended_on:
-    - write_act_2_scenes
-    - outline_basic_plot
-    - develop_vampire_character_details
-    - develop_elf_character_details
-    - determine_chris_pratt_character_profile
+    - outline_novel_plot_structure
     nodes_dependent_on:
-    - compile_full_screenplay
-    prompt: Write the screenplay scenes composing Act 3, concluding the plot, resolving
-      conflicts, and providing a satisfying ending involving vampires, elves, and
-      Chris Pratt's character.
+    - compile_full_novel_draft
+    prompt: Compose the diary entries for chapter 5 of Shaq's diary novel following
+      the plot outline and narrative voice.

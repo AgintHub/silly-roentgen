@@ -1,152 +1,141 @@
 dag_type: plain_text
-description: A workflow for writing a novel styled as Shaq's diary, including concept
-  development, character and setting creation, plot structuring, diary entries by
-  chapters, and final compilation.
-name: write_shaqqs_diary_novel
+description: A workflow that designs a distributed application to store users' music
+  playlists, perform nearest neighbor music taste search, and connect users with similar
+  music preferences as friends.
+name: distributed_music_playlist_and_user_friend_discovery_app
 nodes:
-  brainstorm_main_themes:
+  build_nearest_neighbor_index:
     agent: false
-    description: Identify key themes and topics to weave throughout the diary novel.
-    name: brainstorm_main_themes
+    description: Create a distributed index structure to support fast nearest neighbor
+      search over user music taste vectors.
+    name: build_nearest_neighbor_index
     nodes_depended_on:
-    - define_novel_perspective_and_tone
+    - define_similarity_metric
     nodes_dependent_on:
-    - outline_novel_plot_structure
-    prompt: List main themes and subjects (e.g., fame, sports, family, personal growth)
-      that will be explored in Shaq's diary novel.
-  compile_full_novel_draft:
+    - implement_nearest_neighbor_search_api
+    prompt: Design and build a distributed nearest neighbor index that allows for
+      efficient querying of closest user music taste vectors in the dataset. Choose
+      index data structure and supporting algorithms optimized for the similarity
+      metric.
+  define_playlist_vector_representation:
     agent: false
-    description: Combine all chapters' diary entries into a complete novel draft.
-    name: compile_full_novel_draft
+    description: Create a method to encode user's music playlists into fixed-length
+      numerical vectors representing music taste.
+    name: define_playlist_vector_representation
     nodes_depended_on:
-    - write_chapter_1_entries
-    - write_chapter_2_entries
-    - write_chapter_3_entries
-    - write_chapter_4_entries
-    - write_chapter_5_entries
+    - define_user_playlist_schema
     nodes_dependent_on:
-    - proofread_and_edit_draft
-    prompt: Combine the diary entries from all chapters into one complete, smoothly
-      flowing novel draft, keeping diary style consistent throughout.
-  create_novel_setting:
+    - implement_playlist_vectorization
+    prompt: Design a precise approach to convert a user's music playlists into a fixed-length
+      numerical vector that captures overall music taste, based on the playlist schema.
+      Specify features (e.g. genre distributions, artist embeddings) and vector length.
+  define_similarity_metric:
     agent: false
-    description: Define the primary settings and timeline of the novel.
-    name: create_novel_setting
+    description: Select and define a numerical similarity metric for comparing user
+      music taste vectors.
+    name: define_similarity_metric
     nodes_depended_on:
-    - define_novel_perspective_and_tone
+    - implement_playlist_vectorization
     nodes_dependent_on:
-    - outline_novel_plot_structure
-    prompt: Describe the main settings (locations and timeframes) where Shaq's diary
-      entries take place. Include relevant background details for vivid scene depiction.
-  define_novel_perspective_and_tone:
+    - build_nearest_neighbor_index
+    prompt: Select a precise, mathematically defined similarity metric (e.g. cosine
+      similarity, Euclidean distance) for comparing music taste vectors. Specify the
+      formula and explain why it suits the music taste domain.
+  define_user_playlist_schema:
     agent: false
-    description: Define the narrative perspective and tone of Shaq's diary novel.
-    name: define_novel_perspective_and_tone
+    description: Design a precise data schema format for storing a user's music playlist
+      entries.
+    name: define_user_playlist_schema
     nodes_depended_on: []
     nodes_dependent_on:
-    - develop_shaqq_character_profile
-    - create_novel_setting
-    - brainstorm_main_themes
-    prompt: Determine the narrative perspective (first-person diary style) and the
-      tone (e.g., humorous, reflective, casual) for the novel about Shaq's diary.
-      Provide a clear statement summarizing them.
-  develop_shaqq_character_profile:
+    - design_distributed_storage
+    - define_playlist_vector_representation
+    prompt: Define a detailed data schema for a user's music playlist entries including
+      fields such as userID, trackID, artist, album, genre, and timestamp. The schema
+      should optimize for storage of multiple playlists per user and be unambiguous.
+  design_distributed_storage:
     agent: false
-    description: Create a detailed character profile for Shaq as the diary narrator.
-    name: develop_shaqq_character_profile
+    description: Specify the architecture and technologies for distributed storage
+      of user playlists.
+    name: design_distributed_storage
     nodes_depended_on:
-    - define_novel_perspective_and_tone
+    - define_user_playlist_schema
     nodes_dependent_on:
-    - outline_novel_plot_structure
-    prompt: Develop a detailed character profile for Shaq as the diary narrator, focusing
-      on personality traits, voice style, and unique mannerisms to reflect in diary
-      entries.
-  generate_novel_title_and_blurb:
+    - implement_playlist_storage_api
+    prompt: Design a distributed storage solution to save user music playlists at
+      scale, supporting efficient retrieval by userID. Specify database type(s), partitioning
+      strategy, replication, and indexing based on the playlist schema.
+  design_friend_connection_mechanism:
     agent: false
-    description: Create a compelling title and a brief blurb summarizing the novel.
-    name: generate_novel_title_and_blurb
+    description: Define how users identified via nearest neighbor search are connected
+      and managed as friends.
+    name: design_friend_connection_mechanism
     nodes_depended_on:
-    - proofread_and_edit_draft
-    nodes_dependent_on: []
-    prompt: Based on the final edited draft, generate a creative title and a concise
-      blurb that summarizes the essence of Shaq's diary novel appealingly.
-  outline_novel_plot_structure:
-    agent: false
-    description: Create a chapter-by-chapter plot outline for the diary novel.
-    name: outline_novel_plot_structure
-    nodes_depended_on:
-    - develop_shaqq_character_profile
-    - create_novel_setting
-    - brainstorm_main_themes
+    - implement_nearest_neighbor_search_api
+    - implement_user_registration
     nodes_dependent_on:
-    - write_chapter_1_entries
-    - write_chapter_2_entries
-    - write_chapter_3_entries
-    - write_chapter_4_entries
-    - write_chapter_5_entries
-    prompt: Develop a detailed chapter-by-chapter plot outline focusing on progression
-      and key diary events reflecting Shaq's experiences and themes identified.
-  proofread_and_edit_draft:
+    - implement_friend_connection_api
+    prompt: Design the logic and data structures to connect two users as friends once
+      a nearest neighbor match is made. Specify friend request, acceptance, and storage
+      schema for friends lists.
+  implement_friend_connection_api:
     agent: false
-    description: Proofread and edit the compiled novel draft for style, consistency,
-      grammar, and coherence.
-    name: proofread_and_edit_draft
+    description: Develop a stateless API to handle friend requests, acceptances, and
+      listing friends.
+    name: implement_friend_connection_api
     nodes_depended_on:
-    - compile_full_novel_draft
+    - design_friend_connection_mechanism
+    nodes_dependent_on: []
+    prompt: Implement API endpoints for sending friend requests, accepting requests,
+      and retrieving friends lists. The API must ensure consistency and be stateless
+      in handling user friend connections.
+  implement_nearest_neighbor_search_api:
+    agent: false
+    description: Implement a stateless API to query nearest neighbor users given a
+      music taste vector.
+    name: implement_nearest_neighbor_search_api
+    nodes_depended_on:
+    - build_nearest_neighbor_index
     nodes_dependent_on:
-    - generate_novel_title_and_blurb
-    prompt: Proofread the full novel draft of Shaq's diary. Edit for grammar, stylistic
-      consistency, narrative flow, and character voice. Provide an improved, polished
-      draft.
-  write_chapter_1_entries:
+    - design_friend_connection_mechanism
+    prompt: Implement an API endpoint that accepts a user's music taste vector and
+      returns a ranked list of nearest neighbor userIDs. The API must interact with
+      the distributed nearest neighbor index and be stateless.
+  implement_playlist_storage_api:
     agent: false
-    description: Write diary entries composing chapter 1 based on the outline and
-      character profile.
-    name: write_chapter_1_entries
+    description: Develop a stateless API to store and retrieve user playlists from
+      the distributed storage.
+    name: implement_playlist_storage_api
     nodes_depended_on:
-    - outline_novel_plot_structure
-    nodes_dependent_on: []
-    prompt: Compose the diary entries for chapter 1 of Shaq's diary novel. Emulate
-      the established character voice, settings, and plot events specified in the
-      outline.
-  write_chapter_2_entries:
-    agent: false
-    description: Write diary entries composing chapter 2 based on the outline and
-      character profile.
-    name: write_chapter_2_entries
-    nodes_depended_on:
-    - outline_novel_plot_structure
-    nodes_dependent_on: []
-    prompt: Compose the diary entries for chapter 2 of Shaq's diary novel following
-      the plot outline and maintaining character voice and tone.
-  write_chapter_3_entries:
-    agent: false
-    description: Write diary entries composing chapter 3 based on the outline and
-      character profile.
-    name: write_chapter_3_entries
-    nodes_depended_on:
-    - outline_novel_plot_structure
-    nodes_dependent_on: []
-    prompt: Compose the diary entries for chapter 3 of Shaq's diary novel consistent
-      with the plot outline, character voice, and established tone.
-  write_chapter_4_entries:
-    agent: false
-    description: Write diary entries composing chapter 4 based on the outline and
-      character profile.
-    name: write_chapter_4_entries
-    nodes_depended_on:
-    - outline_novel_plot_structure
-    nodes_dependent_on: []
-    prompt: Compose the diary entries for chapter 4 of Shaq's diary novel using the
-      plot outline and established narrative style.
-  write_chapter_5_entries:
-    agent: false
-    description: Write diary entries composing chapter 5 based on the outline and
-      character profile.
-    name: write_chapter_5_entries
-    nodes_depended_on:
-    - outline_novel_plot_structure
+    - design_distributed_storage
     nodes_dependent_on:
-    - compile_full_novel_draft
-    prompt: Compose the diary entries for chapter 5 of Shaq's diary novel following
-      the plot outline and narrative voice.
+    - implement_user_registration
+    - implement_playlist_vectorization
+    prompt: Implement an API with endpoints to save, update, and fetch user playlists
+      from the distributed storage layer. The API should be stateless and support
+      concurrent requests for multiple users.
+  implement_playlist_vectorization:
+    agent: false
+    description: Build the process to convert stored user playlists to music taste
+      vectors.
+    name: implement_playlist_vectorization
+    nodes_depended_on:
+    - define_playlist_vector_representation
+    - implement_playlist_storage_api
+    nodes_dependent_on:
+    - define_similarity_metric
+    prompt: Develop a procedure to fetch a user's playlists via the storage API and
+      compute the music taste vector according to the defined vector representation
+      method. This process must be stateless for each user vector computation.
+  implement_user_registration:
+    agent: false
+    description: Build a stateless API for users to register and manage their profile
+      data.
+    name: implement_user_registration
+    nodes_depended_on:
+    - implement_playlist_storage_api
+    nodes_dependent_on:
+    - design_friend_connection_mechanism
+    prompt: Implement a user registration and profile management API to create, update,
+      and retrieve user accounts. This contains userID and minimal profile info used
+      for friend connections.

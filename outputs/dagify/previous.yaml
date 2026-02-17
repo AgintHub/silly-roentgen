@@ -1,34 +1,180 @@
 dag_type: plain_text
-description: A workflow that constructs a complete book of poetry from concept to
-  distribution, handling theme definition, poem writing, editing, design, formatting,
-  and marketing.
-name: create_book_of_poetry
+description: A detailed, step-by-step workflow to write a novel set in the southern
+  United States during the 1920s that is thought-provoking, including research, thematic
+  development, outlining, chapter writing, and final synthesis.
+name: write_thought_provoking_1920s_southern_us_novel
 nodes:
-  create_poem_collection_template:
+  compose_overall_summary:
     agent: false
-    description: Creates a consistent structure and style guidelines for each poem
-      in the collection.
-    name: create_poem_collection_template
+    description: Produce a concise, thought-provoking summary of the novel capturing
+      its themes, setting, and narrative impact.
+    name: compose_overall_summary
     nodes_depended_on:
-    - define_book_scope
-    nodes_dependent_on:
-    - write_poem_1
-    - write_poem_2
-    - write_poem_3
-    - write_poem_4
-    - write_poem_5
-    prompt: 'Based on the defined scope, outline a template for each poem: maximum
-      line count, rhyme scheme (if any), style guidelines, and any required metadata
-      (title, subtitle). Provide the template in a table format.'
-  define_book_scope:
+    - write_chapter_5
+    nodes_dependent_on: []
+    prompt: Compose a concise summary of the novel highlighting key themes, the 1920s
+      southern setting, and the story's thought-provoking aspects.
+  develop_character_profiles:
     agent: false
-    description: Establishes the scope and core characteristics of the poetry book.
-    name: define_book_scope
+    description: Create detailed profiles for main and supporting characters, including
+      background, motives, and their relation to the 1920s southern context.
+    name: develop_character_profiles
+    nodes_depended_on:
+    - research_cultural_customs
+    nodes_dependent_on:
+    - draft_plot_outline
+    - write_chapter_1
+    - write_chapter_2
+    - write_chapter_3
+    - write_chapter_4
+    - write_chapter_5
+    prompt: Generate detailed character profiles for the novel’s main and supporting
+      characters, incorporating historical and cultural elements of the 1920s southern
+      United States.
+  develop_novel_theme:
+    agent: false
+    description: Define the central thought-provoking theme(s) for the novel reflecting
+      1920s southern US society.
+    name: develop_novel_theme
+    nodes_depended_on:
+    - research_cultural_customs
+    - research_key_historical_events
+    nodes_dependent_on:
+    - draft_plot_outline
+    prompt: Propose one or more main thought-provoking themes for a novel set in the
+      1920s southern United States informed by research on cultural customs and historical
+      events.
+  draft_plot_outline:
+    agent: false
+    description: Create a detailed plot outline structured in five chapters incorporating
+      the theme, setting, character profiles, and historical context.
+    name: draft_plot_outline
+    nodes_depended_on:
+    - develop_novel_theme
+    - develop_character_profiles
+    - research_key_historical_events
+    - select_narrative_style
+    nodes_dependent_on:
+    - write_chapter_1
+    - write_chapter_2
+    - write_chapter_3
+    - write_chapter_4
+    - write_chapter_5
+    prompt: Draft a detailed outline for a five-chapter novel set in the southern
+      United States during the 1920s that explores the thought-provoking theme(s).
+      Incorporate character arcs, key events, and narrative style.
+  research_cultural_customs:
+    agent: false
+    description: Collect information on daily life, customs, and societal norms in
+      the 1920s southern United States.
+    name: research_cultural_customs
+    nodes_depended_on:
+    - research_historical_context
+    nodes_dependent_on:
+    - develop_novel_theme
+    - develop_character_profiles
+    prompt: Describe typical daily life, cultural customs, and societal norms in the
+      southern United States during the 1920s, focusing on aspects that affect character
+      behavior and story setting.
+  research_historical_context:
+    agent: false
+    description: Gather detailed information about the southern United States during
+      the 1920s covering social, economic, political, and cultural aspects.
+    name: research_historical_context
     nodes_depended_on: []
     nodes_dependent_on:
-    - create_poem_collection_template
-    - design_cover
-    - marketing_plan
-    prompt: 'Identify the key parameters for the poetry book: number of poems, central
-      theme, target audience, and intended publishing format. Provide a concise summary
-      with bullet points.'
+    - research_cultural_customs
+    - research_key_historical_events
+    - research_literary_style_1920s
+    prompt: Research the social, economic, political, and cultural characteristics
+      of the southern United States during the 1920s. Provide a summary of key facts
+      relevant to setting an authentic novel.
+  research_key_historical_events:
+    agent: false
+    description: Identify and summarize key historical events in the southern US during
+      the 1920s that could influence the novel's backdrop or plot.
+    name: research_key_historical_events
+    nodes_depended_on:
+    - research_historical_context
+    nodes_dependent_on:
+    - develop_novel_theme
+    - draft_plot_outline
+    prompt: List and explain key historical events in the southern United States during
+      the 1920s that could impact the novel’s plot or themes.
+  research_literary_style_1920s:
+    agent: false
+    description: Analyze popular literary styles and narrative techniques used in
+      novels from or about the 1920s to inspire appropriate writing style.
+    name: research_literary_style_1920s
+    nodes_depended_on:
+    - research_historical_context
+    nodes_dependent_on:
+    - select_narrative_style
+    prompt: Summarize common literary styles, narrative techniques, and thematic elements
+      used in 1920s American literature, particularly in southern settings.
+  select_narrative_style:
+    agent: false
+    description: Choose the narrative voice and style for the novel inspired by 1920s
+      literary techniques and best suited to the theme.
+    name: select_narrative_style
+    nodes_depended_on:
+    - research_literary_style_1920s
+    nodes_dependent_on:
+    - draft_plot_outline
+    prompt: Select an appropriate narrative voice and style for the novel, drawing
+      on 1920s literary conventions and the novel’s theme.
+  write_chapter_1:
+    agent: false
+    description: Write the first chapter introducing main characters, setting, and
+      initial conflict based on the plot outline.
+    name: write_chapter_1
+    nodes_depended_on:
+    - draft_plot_outline
+    - develop_character_profiles
+    nodes_dependent_on: []
+    prompt: Write the first chapter of the novel that introduces the main characters,
+      establishes the 1920s southern US setting, and presents the initial conflict.
+  write_chapter_2:
+    agent: false
+    description: Write the second chapter developing the plot and deepening character
+      interactions and conflicts.
+    name: write_chapter_2
+    nodes_depended_on:
+    - draft_plot_outline
+    - develop_character_profiles
+    nodes_dependent_on: []
+    prompt: Write the second chapter of the novel advancing the plot and developing
+      character relationships within the 1920s southern context.
+  write_chapter_3:
+    agent: false
+    description: Write the third chapter introducing major plot twists or thematic
+      revelations.
+    name: write_chapter_3
+    nodes_depended_on:
+    - draft_plot_outline
+    - develop_character_profiles
+    nodes_dependent_on: []
+    prompt: Write the third chapter of the novel including significant plot developments
+      and thematic elements that provoke thought.
+  write_chapter_4:
+    agent: false
+    description: Write the fourth chapter escalating tensions and preparing for resolution.
+    name: write_chapter_4
+    nodes_depended_on:
+    - draft_plot_outline
+    - develop_character_profiles
+    nodes_dependent_on: []
+    prompt: Write the fourth chapter of the novel building tension and leading toward
+      the climax within the historical and thematic context.
+  write_chapter_5:
+    agent: false
+    description: Write the fifth chapter concluding the story and providing a thoughtful
+      resolution.
+    name: write_chapter_5
+    nodes_depended_on:
+    - draft_plot_outline
+    - develop_character_profiles
+    nodes_dependent_on:
+    - compose_overall_summary
+    prompt: Write the final chapter of the novel that concludes the story and delivers
+      a thoughtful and impactful resolution.

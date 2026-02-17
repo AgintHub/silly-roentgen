@@ -1,67 +1,112 @@
 dag_type: plain_text
-description: A workflow to perform a generic test operation by defining test parameters,
-  executing the test, capturing results, and summarizing output.
-name: perform_simple_test
+description: A detailed workflow to collect, organize, and write a comprehensive biography
+  of George W. Bush.
+name: write_george_w_bush_biography
 nodes:
-  analyze_test_results:
+  compile_biography_outline:
     agent: false
-    description: Interpret the test output to determine success criteria and highlight
-      any failures or anomalies.
-    name: analyze_test_results
+    description: Create a structured outline for the biography integrating all collected
+      topics.
+    name: compile_biography_outline
     nodes_depended_on:
-    - capture_test_results
+    - research_political_career
+    - research_presidency_major_events
+    - research_personal_life
     nodes_dependent_on:
-    - summarize_test_results
-    prompt: Review the captured test results to identify whether the test passed or
-      failed and note any anomalies or issues. Provide a concise analysis summary.
-  capture_test_results:
+    - write_biography_text
+    prompt: Create a detailed and chronological outline for the biography of George
+      W. Bush, covering early life, education, military service, business career,
+      political career, presidency, major events, and personal life.
+  research_business_career:
     agent: false
-    description: Collect and format the raw output data produced by the test execution.
-    name: capture_test_results
+    description: Compile information about George W. Bush's business activities prior
+      to political career.
+    name: research_business_career
     nodes_depended_on:
-    - execute_test
+    - research_early_life
     nodes_dependent_on:
-    - analyze_test_results
-    prompt: Extract and organize all output generated from the test execution in a
-      clear and structured format ready for analysis.
-  define_test_parameters:
+    - research_political_career
+    prompt: Research George W. Bush's involvement in business ventures and activities
+      before entering politics. Include company names, roles, and major accomplishments
+      or controversies.
+  research_early_life:
     agent: false
-    description: Enumerate and describe all parameters required to run the defined
-      test.
-    name: define_test_parameters
-    nodes_depended_on:
-    - define_test_type
-    nodes_dependent_on:
-    - execute_test
-    prompt: List all the parameters needed to execute the test specified. Provide
-      parameter names, data types, and example values. Present as a bulleted list.
-  define_test_type:
-    agent: false
-    description: Specify the type of test to be performed.
-    name: define_test_type
+    description: Gather detailed information about George W. Bush's early life and
+      family background.
+    name: research_early_life
     nodes_depended_on: []
     nodes_dependent_on:
-    - define_test_parameters
-    - execute_test
-    prompt: Specify the precise type or nature of the test to run (e.g., functional
-      test, performance test, unit test). Provide a clear, concise single-line description.
-  execute_test:
+    - research_education
+    - research_military_service
+    - research_business_career
+    prompt: Collect detailed information on George W. Bush's birth, family background,
+      childhood experiences, and upbringing. Keep details factual and chronological.
+  research_education:
     agent: false
-    description: Run the test using the specified type and parameters.
-    name: execute_test
+    description: Collect data on George W. Bush's educational history including schools
+      attended and degrees obtained.
+    name: research_education
     nodes_depended_on:
-    - define_test_type
-    - define_test_parameters
+    - research_early_life
     nodes_dependent_on:
-    - capture_test_results
-    prompt: Execute the test defined by the provided test type and parameters. Confirm
-      test initiation and completion, and produce raw output data as the result.
-  summarize_test_results:
+    - research_political_career
+    prompt: Gather information about George W. Bush's education, including where he
+      attended school, university, and any special training or academic achievements.
+      Present chronologically.
+  research_military_service:
     agent: false
-    description: Generate a final summary report about the test outcome.
-    name: summarize_test_results
+    description: Gather information about George W. Bush's military service record
+      and related experiences.
+    name: research_military_service
     nodes_depended_on:
-    - analyze_test_results
+    - research_early_life
+    nodes_dependent_on:
+    - research_political_career
+    prompt: Collect historical and factual information on George W. Bush's service
+      in the military, including branch, rank, duties, and notable events.
+  research_personal_life:
+    agent: false
+    description: Gather information on George W. Bush’s personal life, including family,
+      hobbies, and post-presidential activities.
+    name: research_personal_life
+    nodes_depended_on: []
+    nodes_dependent_on:
+    - compile_biography_outline
+    prompt: Collect details on George W. Bush's personal life, including marriage,
+      children, hobbies, philanthropy, and post-presidential endeavors.
+  research_political_career:
+    agent: false
+    description: Collect detailed information about George W. Bush's political career,
+      including offices held and major policies.
+    name: research_political_career
+    nodes_depended_on:
+    - research_education
+    - research_military_service
+    - research_business_career
+    nodes_dependent_on:
+    - compile_biography_outline
+    prompt: Gather comprehensive information on George W. Bush's political career,
+      including gubernatorial and presidential tenures, key policies, major events,
+      and election campaigns.
+  research_presidency_major_events:
+    agent: false
+    description: Collect information specifically on major events and decisions during
+      George W. Bush's presidency.
+    name: research_presidency_major_events
+    nodes_depended_on:
+    - research_political_career
+    nodes_dependent_on:
+    - compile_biography_outline
+    prompt: Compile major events, decisions, and controversies during George W. Bush's
+      presidency such as 9/11, wars, economic policies, and domestic reforms.
+  write_biography_text:
+    agent: false
+    description: Compose the full biography text of George W. Bush based on the compiled
+      outline.
+    name: write_biography_text
+    nodes_depended_on:
+    - compile_biography_outline
     nodes_dependent_on: []
-    prompt: Produce a summary report that clearly states the test's success or failure
-      status and key findings, suitable for stakeholders to review.
+    prompt: Using the detailed outline, write a comprehensive biography of George
+      W. Bush. Include factual details, maintain chronological order, and ensure clear,
+      engaging prose.

@@ -1,104 +1,67 @@
 dag_type: plain_text
-description: A detailed workflow for designing, executing, and reporting the results
-  of a test, with maximal concurrency and atomic task decomposition.
-name: test_execution_workflow
+description: A fundamental test workflow that executes initialization, parallel test
+  execution, validation, and reporting in a structured DAG
+name: basic_test_workflow
 nodes:
-  aggregate_validation_results:
+  execute_system_checks:
     agent: false
-    description: Combine validation results from integration and unit tests into a
-      unified format.
-    name: aggregate_validation_results
+    description: Validate end-to-end system functionality
+    name: execute_system_checks
     nodes_depended_on:
-    - validate_integration_test_results
-    - validate_unit_test_results
+    - initialize_test_environment
     nodes_dependent_on:
-    - generate_comprehensive_test_report
-    prompt: Compile integration and unit test validation results into a structured
-      summary. Highlight key metrics.
-  design_test_cases:
+    - validate_test_results
+    prompt: Run system-level test scenarios simulating real-world usage patterns across
+      all interconnected components.
+  generate_summary_report:
     agent: false
-    description: Define the test objectives, scenarios, and detailed procedures for
-      execution.
-    name: design_test_cases
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - execute_integration_tests
-    - execute_unit_tests
-    prompt: Create a list of test objectives, scenarios, and detailed procedures.
-      Ensure each test is actionable and verifiable.
-  execute_integration_tests:
-    agent: false
-    description: Run integration tests using prepared data and configured environment.
-    name: execute_integration_tests
+    description: Produce consolidated test execution documentation
+    name: generate_summary_report
     nodes_depended_on:
-    - design_test_cases
-    - setup_test_environment
-    - prepare_test_data
-    nodes_dependent_on:
-    - validate_integration_test_results
-    prompt: Execute integration test cases based on the provided design, using the
-      test environment and data. Report raw output.
-  execute_unit_tests:
-    agent: false
-    description: Run individual unit tests for discrete components using the test
-      environment and data.
-    name: execute_unit_tests
-    nodes_depended_on:
-    - design_test_cases
-    - setup_test_environment
-    - prepare_test_data
-    nodes_dependent_on:
-    - validate_unit_test_results
-    prompt: Run unit tests according to the test design, using the provided environment
-      and data. Return raw results.
-  generate_comprehensive_test_report:
-    agent: false
-    description: Create a final report consolidating test design, execution results,
-      and validation findings.
-    name: generate_comprehensive_test_report
-    nodes_depended_on:
-    - aggregate_validation_results
+    - validate_test_results
     nodes_dependent_on: []
-    prompt: Produce a test report containing objectives, execution details, validation
-      results, and summary insights.
-  prepare_test_data:
+    prompt: Compile structured test summary including pass rates, error distribution,
+      and system performance metrics.
+  initialize_test_environment:
     agent: false
-    description: Generate or curate the datasets required to execute the tests.
-    name: prepare_test_data
+    description: Set up required testing infrastructure and dependencies
+    name: initialize_test_environment
     nodes_depended_on: []
     nodes_dependent_on:
-    - execute_integration_tests
-    - execute_unit_tests
-    prompt: Compile, create, or verify the datasets needed for test execution, including
-      edge cases and invalid inputs.
-  setup_test_environment:
+    - run_unit_tests
+    - run_integration_tests
+    - execute_system_checks
+    prompt: Initialize test environment by installing required dependencies and launching
+      test infrastructure. Confirm availability of testing frameworks and mock services.
+  run_integration_tests:
     agent: false
-    description: Configure the hardware, software, and dependencies required to run
-      the tests.
-    name: setup_test_environment
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - execute_integration_tests
-    - execute_unit_tests
-    prompt: Set up the test environment with required tools, configurations, and dependencies.
-      Document the environment state.
-  validate_integration_test_results:
-    agent: false
-    description: Assess whether integration test outcomes meet expected criteria.
-    name: validate_integration_test_results
+    description: Verify component interaction correctness
+    name: run_integration_tests
     nodes_depended_on:
-    - execute_integration_tests
+    - initialize_test_environment
     nodes_dependent_on:
-    - aggregate_validation_results
-    prompt: Compare integration test actual results against expected outcomes. Note
-      variances and pass/fail status.
-  validate_unit_test_results:
+    - validate_test_results
+    prompt: Execute integration tests between core system components. Test data flow
+      between services and interface compatibility.
+  run_unit_tests:
     agent: false
-    description: Assess whether unit test outcomes align with expected outcomes.
-    name: validate_unit_test_results
+    description: Execute isolated unit test cases
+    name: run_unit_tests
     nodes_depended_on:
-    - execute_unit_tests
+    - initialize_test_environment
     nodes_dependent_on:
-    - aggregate_validation_results
-    prompt: Evaluate unit test results against expected outcomes. Document discrepancies
-      and pass/fail status.
+    - validate_test_results
+    prompt: Run all unit tests using standard test framework. Focus on individual
+      function/module validation with mocked dependencies.
+  validate_test_results:
+    agent: false
+    description: Analyze test outcomes for pass/fail status
+    name: validate_test_results
+    nodes_depended_on:
+    - run_unit_tests
+    - run_integration_tests
+    - execute_system_checks
+    nodes_dependent_on:
+    - generate_summary_report
+    prompt: Aggregate test execution results from all test categories. Identify failure
+      patterns and validate against quality criteria.

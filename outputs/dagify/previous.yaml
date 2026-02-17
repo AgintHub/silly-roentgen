@@ -1,112 +1,66 @@
 dag_type: plain_text
-description: A detailed workflow to collect, organize, and write a comprehensive biography
-  of George W. Bush.
-name: write_george_w_bush_biography
+description: Runs a comprehensive test suite for a software project, including unit
+  and integration tests, and produces a report.
+name: software_test_workflow
 nodes:
-  compile_biography_outline:
+  clone_repository:
     agent: false
-    description: Create a structured outline for the biography integrating all collected
-      topics.
-    name: compile_biography_outline
-    nodes_depended_on:
-    - research_political_career
-    - research_presidency_major_events
-    - research_personal_life
-    nodes_dependent_on:
-    - write_biography_text
-    prompt: Create a detailed and chronological outline for the biography of George
-      W. Bush, covering early life, education, military service, business career,
-      political career, presidency, major events, and personal life.
-  research_business_career:
-    agent: false
-    description: Compile information about George W. Bush's business activities prior
-      to political career.
-    name: research_business_career
-    nodes_depended_on:
-    - research_early_life
-    nodes_dependent_on:
-    - research_political_career
-    prompt: Research George W. Bush's involvement in business ventures and activities
-      before entering politics. Include company names, roles, and major accomplishments
-      or controversies.
-  research_early_life:
-    agent: false
-    description: Gather detailed information about George W. Bush's early life and
-      family background.
-    name: research_early_life
+    description: Fetches the latest code from the version control system.
+    name: clone_repository
     nodes_depended_on: []
     nodes_dependent_on:
-    - research_education
-    - research_military_service
-    - research_business_career
-    prompt: Collect detailed information on George W. Bush's birth, family background,
-      childhood experiences, and upbringing. Keep details factual and chronological.
-  research_education:
+    - setup_environment
+    prompt: Clone the source code repository from the provided URL into the working
+      directory.
+  collect_results:
     agent: false
-    description: Collect data on George W. Bush's educational history including schools
-      attended and degrees obtained.
-    name: research_education
+    description: Aggregates test results.
+    name: collect_results
     nodes_depended_on:
-    - research_early_life
+    - run_unit_tests
+    - run_integration_tests
     nodes_dependent_on:
-    - research_political_career
-    prompt: Gather information about George W. Bush's education, including where he
-      attended school, university, and any special training or academic achievements.
-      Present chronologically.
-  research_military_service:
+    - aggregate_results
+    prompt: Collect the output files from the unit and integration tests and combine
+      them into a single consolidated results JSON.
+  install_dependencies:
     agent: false
-    description: Gather information about George W. Bush's military service record
-      and related experiences.
-    name: research_military_service
+    description: Installs required libraries and tools.
+    name: install_dependencies
     nodes_depended_on:
-    - research_early_life
+    - setup_environment
     nodes_dependent_on:
-    - research_political_career
-    prompt: Collect historical and factual information on George W. Bush's service
-      in the military, including branch, rank, duties, and notable events.
-  research_personal_life:
+    - run_unit_tests
+    - run_integration_tests
+    prompt: Install all project dependencies defined in the package manager configuration
+      files (e.g., pip install -r requirements.txt).
+  run_integration_tests:
     agent: false
-    description: Gather information on George W. Bush’s personal life, including family,
-      hobbies, and post-presidential activities.
-    name: research_personal_life
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - compile_biography_outline
-    prompt: Collect details on George W. Bush's personal life, including marriage,
-      children, hobbies, philanthropy, and post-presidential endeavors.
-  research_political_career:
-    agent: false
-    description: Collect detailed information about George W. Bush's political career,
-      including offices held and major policies.
-    name: research_political_career
+    description: Runs the integration test suite.
+    name: run_integration_tests
     nodes_depended_on:
-    - research_education
-    - research_military_service
-    - research_business_career
+    - install_dependencies
     nodes_dependent_on:
-    - compile_biography_outline
-    prompt: Gather comprehensive information on George W. Bush's political career,
-      including gubernatorial and presidential tenures, key policies, major events,
-      and election campaigns.
-  research_presidency_major_events:
+    - collect_results
+    prompt: Execute all integration tests for the project and produce a test results
+      file in JUnit XML format.
+  run_unit_tests:
     agent: false
-    description: Collect information specifically on major events and decisions during
-      George W. Bush's presidency.
-    name: research_presidency_major_events
+    description: Runs the unit test suite.
+    name: run_unit_tests
     nodes_depended_on:
-    - research_political_career
+    - install_dependencies
     nodes_dependent_on:
-    - compile_biography_outline
-    prompt: Compile major events, decisions, and controversies during George W. Bush's
-      presidency such as 9/11, wars, economic policies, and domestic reforms.
-  write_biography_text:
+    - collect_results
+    prompt: Execute all unit tests for the project and produce a test results file
+      in JUnit XML format.
+  setup_environment:
     agent: false
-    description: Compose the full biography text of George W. Bush based on the compiled
-      outline.
-    name: write_biography_text
+    description: Sets up an isolated environment for the test run.
+    name: setup_environment
     nodes_depended_on:
-    - compile_biography_outline
-    nodes_dependent_on: []
-    prompt: Using the detailed outline, write a comprehensive biography of George
-      W. Bush. Include factual details, maintain chronological order, and ensure clear,
-      engaging prose.
+    - clone_repository
+    nodes_dependent_on:
+    - install_dependencies
+    prompt: Prepare a clean virtual environment suitable for building and testing
+      the project (e.g., create a Docker container or virtualenv).

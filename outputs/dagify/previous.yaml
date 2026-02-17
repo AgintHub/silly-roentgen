@@ -1,205 +1,179 @@
 dag_type: plain_text
-description: A workflow to assemble an all-star basketball team with no budget constraints,
-  identifying and selecting top players for each position, defining team roles, and
-  finalizing the roster.
-name: build_all_star_basketball_team
+description: A highly concurrent DAG to plan and write a children's book about jungle
+  animals, from audience and style decisions through outlines, five chapter drafts,
+  glossary, illustration plan, final manuscript, and packaging.
+name: write_jungle_animals_book_workflow
 nodes:
-  assign_player_roles:
+  assemble_book_evidence_and_illustrations_plan:
     agent: false
-    description: Define specific roles and responsibilities for each selected player
-      on the team.
-    name: assign_player_roles
+    description: Devise an illustration plan and visual rationale per chapter.
+    name: assemble_book_evidence_and_illustrations_plan
     nodes_depended_on:
-    - select_point_guard
-    - select_shooting_guard
-    - select_small_forward
-    - select_power_forward
-    - select_center
-    nodes_dependent_on:
-    - finalize_team_roster
-    prompt: Assign specific roles, playing style, and strategic responsibilities to
-      each chosen player to maximize team synergy and performance.
-  define_team_positions:
-    agent: false
-    description: List all basketball team positions needed for the all-star team roster.
-    name: define_team_positions
-    nodes_depended_on: []
-    nodes_dependent_on:
-    - identify_best_point_guards
-    - identify_best_shooting_guards
-    - identify_best_small_forwards
-    - identify_best_power_forwards
-    - identify_best_centers
-    prompt: Identify and list the standard basketball positions required for an all-star
-      team roster, e.g., point guard, shooting guard, small forward, power forward,
-      center.
-  evaluate_centers:
-    agent: false
-    description: Evaluate and rate the top centers on key performance criteria for
-      selection.
-    name: evaluate_centers
-    nodes_depended_on:
-    - identify_best_centers
-    nodes_dependent_on:
-    - select_center
-    prompt: Assess the listed top centers on rim protection, rebounding, scoring inside,
-      physical presence, and fit for the team. Provide scores or qualitative ratings.
-  evaluate_point_guards:
-    agent: false
-    description: Evaluate and rate the top point guards on key performance criteria
-      for selection.
-    name: evaluate_point_guards
-    nodes_depended_on:
-    - identify_best_point_guards
-    nodes_dependent_on:
-    - select_point_guard
-    prompt: Assess the listed top point guards on criteria including scoring, assists,
-      defense, leadership, and fit for the team. Provide scores or a qualitative rating.
-  evaluate_power_forwards:
-    agent: false
-    description: Evaluate and rate the top power forwards on key performance criteria
-      for selection.
-    name: evaluate_power_forwards
-    nodes_depended_on:
-    - identify_best_power_forwards
-    nodes_dependent_on:
-    - select_power_forward
-    prompt: Assess the listed top power forwards on rebounding, scoring, defense,
-      physicality, and team role fit. Provide scores or qualitative ratings.
-  evaluate_shooting_guards:
-    agent: false
-    description: Evaluate and rate the top shooting guards on key performance criteria
-      for selection.
-    name: evaluate_shooting_guards
-    nodes_depended_on:
-    - identify_best_shooting_guards
-    nodes_dependent_on:
-    - select_shooting_guard
-    prompt: Assess the listed top shooting guards on scoring, shooting accuracy, defense,
-      versatility, and team role fit. Provide scores or qualitative ratings.
-  evaluate_small_forwards:
-    agent: false
-    description: Evaluate and rate the top small forwards on key performance criteria
-      for selection.
-    name: evaluate_small_forwards
-    nodes_depended_on:
-    - identify_best_small_forwards
-    nodes_dependent_on:
-    - select_small_forward
-    prompt: Assess the listed top small forwards on scoring, defense, versatility,
-      athleticism, and team synergy. Provide scores or qualitative ratings.
-  finalize_team_roster:
-    agent: false
-    description: Compile the finalized all-star basketball team roster with assigned
-      roles.
-    name: finalize_team_roster
-    nodes_depended_on:
-    - assign_player_roles
+    - create_animal_catalog
+    - set_tone_and_style
     nodes_dependent_on: []
-    prompt: Create the final roster list of the all-star basketball team including
-      each player's name, position, and assigned role.
-  identify_best_centers:
+    prompt: Create an illustration plan per chapter including suggested scenes for
+      illustrations, portrait ideas for animals, color palette notes, and how visuals
+      reinforce learning points. Include a brief rationale for each chapter.
+  compile_glossary_terms:
     agent: false
-    description: Compile a list of the current best centers available in professional
-      basketball.
-    name: identify_best_centers
+    description: Create a glossary of kid-friendly terms from the catalog and chapters.
+    name: compile_glossary_terms
     nodes_depended_on:
-    - define_team_positions
-    nodes_dependent_on:
-    - evaluate_centers
-    prompt: Generate a ranked list of the top centers in professional basketball based
-      on recent performance, skills, and accolades.
-  identify_best_point_guards:
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Generate a glossary of up to 20 terms derived from jungle animal topics
+      with simple definitions and pronunciations.
+  create_animal_catalog:
     agent: false
-    description: Compile a list of the current best point guards available in professional
-      basketball.
-    name: identify_best_point_guards
-    nodes_depended_on:
-    - define_team_positions
-    nodes_dependent_on:
-    - evaluate_point_guards
-    prompt: Generate a ranked list of the top point guards in professional basketball
-      based on recent performance, skills, and accolades.
-  identify_best_power_forwards:
+    description: Assemble a catalog of jungle animals to feature with key facts and
+      hooks.
+    name: create_animal_catalog
+    nodes_depended_on: []
+    nodes_dependent_on: []
+    prompt: 'Create a catalog of 12 jungle animals with for each: Name, KeyFacts (3-4
+      bullets), StoryHook (one sentence), HabitatBrief (one sentence).'
+  develop_book_outline:
     agent: false
-    description: Compile a list of the current best power forwards available in professional
-      basketball.
-    name: identify_best_power_forwards
+    description: Produce a high-level 5-chapter outline aligned to audience, length,
+      tone, and animal catalog.
+    name: develop_book_outline
     nodes_depended_on:
-    - define_team_positions
-    nodes_dependent_on:
-    - evaluate_power_forwards
-    prompt: Generate a ranked list of the top power forwards in professional basketball
-      based on recent performance, skills, and accolades.
-  identify_best_shooting_guards:
+    - set_target_audience
+    - set_book_length
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Draft a 5-chapter outline for the jungle animals book. Include ChapterTitle,
+      Objective, KeyLearningPoints (3 per chapter), and a brief StoryArc. Do not write
+      full chapters yet.
+  export_book_package:
     agent: false
-    description: Compile a list of the current best shooting guards available in professional
-      basketball.
-    name: identify_best_shooting_guards
+    description: Prepare the final deliverables package for distribution or publication.
+    name: export_book_package
     nodes_depended_on:
-    - define_team_positions
-    nodes_dependent_on:
-    - evaluate_shooting_guards
-    prompt: Generate a ranked list of the top shooting guards in professional basketball
-      based on recent performance, skills, and accolades.
-  identify_best_small_forwards:
+    - final_review_and_quality_check
+    nodes_dependent_on: []
+    prompt: 'Prepare the final book package: manuscript text, glossary, illustration
+      plan, and formatting notes. Provide filenames and basic formatting guidelines.'
+  final_review_and_quality_check:
     agent: false
-    description: Compile a list of the current best small forwards available in professional
-      basketball.
-    name: identify_best_small_forwards
+    description: Perform a final quality check across manuscript, glossary, and illustration
+      plan.
+    name: final_review_and_quality_check
     nodes_depended_on:
-    - define_team_positions
-    nodes_dependent_on:
-    - evaluate_small_forwards
-    prompt: Generate a ranked list of the top small forwards in professional basketball
-      based on recent performance, skills, and accolades.
-  select_center:
+    - write_draft_combined_manuscript
+    - compile_glossary_terms
+    - assemble_book_evidence_and_illustrations_plan
+    nodes_dependent_on: []
+    prompt: Review the assembled manuscript for coherence, factual accuracy, readability
+      for the target audience, alignment with glossary terms, and consistency with
+      the illustration plan. Provide a concise list of issues and recommended fixes.
+  generate_chapter_titles:
     agent: false
-    description: Choose the best center for the team based on evaluations.
-    name: select_center
+    description: Create cohesive chapter titles derived from the outline.
+    name: generate_chapter_titles
     nodes_depended_on:
-    - evaluate_centers
-    nodes_dependent_on:
-    - assign_player_roles
-    prompt: Based on the evaluation scores, select the optimum center to fill the
-      starting position on the all-star team.
-  select_point_guard:
+    - develop_book_outline
+    nodes_dependent_on: []
+    prompt: From the outline, generate five chapter titles that fit the tone and flow.
+      Output ChapterTitles as a list.
+  set_book_length:
     agent: false
-    description: Choose the best point guard for the team based on evaluations.
-    name: select_point_guard
-    nodes_depended_on:
-    - evaluate_point_guards
-    nodes_dependent_on:
-    - assign_player_roles
-    prompt: Based on the evaluation scores, select the optimum point guard to fill
-      the starting position on the all-star team.
-  select_power_forward:
+    description: Set the overall length and page estimate for the book.
+    name: set_book_length
+    nodes_depended_on: []
+    nodes_dependent_on: []
+    prompt: 'Define the total word count range and approximate page count for the
+      book. Provide: TotalWordCount and EstimatedPages.'
+  set_target_audience:
     agent: false
-    description: Choose the best power forward for the team based on evaluations.
-    name: select_power_forward
-    nodes_depended_on:
-    - evaluate_power_forwards
-    nodes_dependent_on:
-    - assign_player_roles
-    prompt: Based on the evaluation scores, select the optimum power forward to fill
-      the starting position on the all-star team.
-  select_shooting_guard:
+    description: Define the target reader profile for the jungle animals book.
+    name: set_target_audience
+    nodes_depended_on: []
+    nodes_dependent_on: []
+    prompt: 'Specify the target audience for a children''s book about jungle animals.
+      Provide: AgeRange, ReadingLevel, and a single learning objective.'
+  set_tone_and_style:
     agent: false
-    description: Choose the best shooting guard for the team based on evaluations.
-    name: select_shooting_guard
-    nodes_depended_on:
-    - evaluate_shooting_guards
-    nodes_dependent_on:
-    - assign_player_roles
-    prompt: Based on the evaluation scores, select the optimum shooting guard to fill
-      the starting position on the all-star team.
-  select_small_forward:
+    description: Establish the narrative voice and stylistic guidelines for the book.
+    name: set_tone_and_style
+    nodes_depended_on: []
+    nodes_dependent_on: []
+    prompt: Describe the narrative voice and style for the book. Provide Tone, VoiceGuidelines,
+      and VocabularyLevel.
+  write_chapter_1_draft:
     agent: false
-    description: Choose the best small forward for the team based on evaluations.
-    name: select_small_forward
+    description: Write the full draft for Chapter 1 based on the outline, tone, and
+      animal catalog.
+    name: write_chapter_1_draft
     nodes_depended_on:
-    - evaluate_small_forwards
-    nodes_dependent_on:
-    - assign_player_roles
-    prompt: Based on the evaluation scores, select the optimum small forward to fill
-      the starting position on the all-star team.
+    - develop_book_outline
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Write Chapter 1 draft based on the outline and animal catalog. Include
+      scene setup, first animal focus, and alignment with the learning objective.
+  write_chapter_2_draft:
+    agent: false
+    description: Write the full draft for Chapter 2 based on the outline, tone, and
+      animal catalog.
+    name: write_chapter_2_draft
+    nodes_depended_on:
+    - develop_book_outline
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Write Chapter 2 draft based on the outline and animal catalog. Continue
+      the story arc and learning points established in Chapter 1.
+  write_chapter_3_draft:
+    agent: false
+    description: Write the full draft for Chapter 3 based on the outline, tone, and
+      animal catalog.
+    name: write_chapter_3_draft
+    nodes_depended_on:
+    - develop_book_outline
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Write Chapter 3 draft based on the outline and animal catalog. Introduce
+      a new animal focus and reinforce learning points.
+  write_chapter_4_draft:
+    agent: false
+    description: Write the full draft for Chapter 4 based on the outline, tone, and
+      animal catalog.
+    name: write_chapter_4_draft
+    nodes_depended_on:
+    - develop_book_outline
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Write Chapter 4 draft based on the outline and animal catalog. Build toward
+      the story’s progression and learning outcomes.
+  write_chapter_5_draft:
+    agent: false
+    description: Write the full draft for Chapter 5 based on the outline, tone, and
+      animal catalog.
+    name: write_chapter_5_draft
+    nodes_depended_on:
+    - develop_book_outline
+    - set_tone_and_style
+    - create_animal_catalog
+    nodes_dependent_on: []
+    prompt: Write Chapter 5 draft based on the outline and animal catalog. Provide
+      a satisfying ending that reinforces learning objectives.
+  write_draft_combined_manuscript:
+    agent: false
+    description: Assemble the five chapter drafts into a cohesive manuscript with
+      smooth transitions.
+    name: write_draft_combined_manuscript
+    nodes_depended_on:
+    - write_chapter_1_draft
+    - write_chapter_2_draft
+    - write_chapter_3_draft
+    - write_chapter_4_draft
+    - write_chapter_5_draft
+    nodes_dependent_on: []
+    prompt: Combine the five chapter drafts into a single manuscript, ensuring consistent
+      voice and seamless transitions between chapters. Do not rewrite content; adjust
+      for coherence and flow.

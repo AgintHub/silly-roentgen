@@ -1,6 +1,5 @@
-dag_type: plain_text
-description: Workflow that defines, executes, assesses, summarizes, and communicates
-  test results to stakeholders.
+dag_type: typed
+description: Generated workflow from UI.
 name: perform_test
 nodes:
   assess_test_results:
@@ -12,6 +11,21 @@ nodes:
     - validate_test_outcome
     - define_success_criteria
     nodes_dependent_on: []
+    output_structure:
+    - description: Overall pass/fail determination for the test based on the success
+        criteria.
+      key: test_passed
+      type: bool
+    - description: Detailed explanation of why the test passed or failed, referencing
+        specific criteria and outcomes.
+      key: assessment_explanation
+      type: str
+    - description: List of success criteria that were satisfied by the test results.
+      key: met_criteria
+      type: List[str]
+    - description: List of success criteria that were not satisfied by the test results.
+      key: unmet_criteria
+      type: List[str]
     prompt: Analyze the test results relative to the predefined success criteria.
       State if the test passes or fails, and explain why.
   define_success_criteria:
@@ -21,6 +35,15 @@ nodes:
     nodes_depended_on:
     - define_test_scope
     nodes_dependent_on: []
+    output_structure:
+    - description: A list of measurable criteria or conditions that define a successful
+        test outcome.
+      key: success_criteria
+      type: List[str]
+    - description: A list of measurable criteria or conditions that define an unsuccessful
+        test outcome.
+      key: failure_criteria
+      type: List[str]
     prompt: List measurable criteria or conditions that indicate the test is successful
       or unsuccessful.
   define_test_scope:
@@ -29,6 +52,21 @@ nodes:
     name: define_test_scope
     nodes_depended_on: []
     nodes_dependent_on: []
+    output_structure:
+    - description: A concise statement of the overall goal of the test.
+      key: test_goal
+      type: str
+    - description: Description of the boundaries and extent of what will be tested.
+      key: test_scope
+      type: str
+    - description: List of specific components, features, or variables that are being
+        tested.
+      key: tested_items
+      type: List[str]
+    - description: The expected result or success condition that the test aims to
+        achieve.
+      key: desired_outcome
+      type: str
     prompt: Define clearly the goal and scope of the test you will perform, including
       what is being tested and the desired outcome.
   design_test_procedure:
@@ -39,6 +77,14 @@ nodes:
     nodes_depended_on:
     - define_test_scope
     nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of individual steps describing how to conduct the
+        test.
+      key: procedure_steps
+      type: List[str]
+    - description: A concise textual summary of the overall test procedure.
+      key: procedure_summary
+      type: str
     prompt: Provide a clear, sequential procedure for performing the test as per the
       defined scope.
   execute_test_actions:
@@ -50,6 +96,21 @@ nodes:
     - prepare_test_inputs
     - design_test_procedure
     nodes_dependent_on: []
+    output_structure:
+    - description: Ordered list of procedure steps that were executed.
+      key: executed_steps
+      type: List[str]
+    - description: List of observable results, messages, or data produced by each
+        executed step.
+      key: observed_outputs
+      type: List[str]
+    - description: List of any errors or issues encountered during execution of the
+        test steps.
+      key: execution_errors
+      type: List[str]
+    - description: Indicates whether all test steps were completed without errors.
+      key: overall_success
+      type: bool
     prompt: Execute all steps of the test procedure using the correct inputs and record
       observable actions or outputs.
   prepare_test_inputs:
@@ -60,6 +121,20 @@ nodes:
     nodes_depended_on:
     - define_test_scope
     nodes_dependent_on: []
+    output_structure:
+    - description: Names or identifiers of each input required for the test.
+      key: input_items
+      type: List[str]
+    - description: Brief description of each input item, explaining its purpose.
+      key: input_descriptions
+      type: List[str]
+    - description: URLs, file paths, or references to resources needed for the inputs.
+      key: resource_links
+      type: List[str]
+    - description: Indicates whether all listed inputs have been successfully gathered
+        or created.
+      key: is_all_inputs_prepared
+      type: bool
     prompt: Prepare and list all inputs, data, or resources needed to carry out the
       test based on the defined scope.
   summarize_test_findings:
@@ -70,6 +145,31 @@ nodes:
     nodes_depended_on:
     - assess_test_results
     nodes_dependent_on: []
+    output_structure:
+    - description: A concise textual summary of the whole test covering scope, procedure,
+        inputs, outcomes, assessment and conclusion.
+      key: summary
+      type: str
+    - description: Description of the test's objective and scope.
+      key: test_scope
+      type: str
+    - description: Brief description of the step‑by‑step procedure that was executed.
+      key: test_procedure
+      type: str
+    - description: List of key inputs, data or resources used in the test.
+      key: test_inputs
+      type: List[str]
+    - description: Raw outcomes or observable results captured from the test execution.
+      key: test_outcome
+      type: str
+    - description: Boolean indicating whether the test passed (true) or failed (false)
+        according to the success criteria.
+      key: pass_fail
+      type: bool
+    - description: Explanation of why the test was judged to pass or fail, referencing
+        the success criteria.
+      key: assessment_explanation
+      type: str
     prompt: Summarize the entire test including scope, procedure, input, outcome,
       success assessment, and final conclusion clearly and succinctly.
   update_stakeholders:
@@ -79,6 +179,22 @@ nodes:
     nodes_depended_on:
     - summarize_test_findings
     nodes_dependent_on: []
+    output_structure:
+    - description: Full text of the brief report intended for stakeholders.
+      key: stakeholder_report
+      type: str
+    - description: A concise statement of the test's purpose.
+      key: test_purpose
+      type: str
+    - description: Bullet‑point list of the most important findings from the test.
+      key: key_findings
+      type: List[str]
+    - description: Summary of whether the test passed or failed and the rationale.
+      key: success_assessment
+      type: str
+    - description: Suggested actions or follow‑up steps based on the test outcome.
+      key: recommended_next_steps
+      type: List[str]
     prompt: Compose a brief report for stakeholders that outlines the test purpose,
       key findings, success assessment, and any recommended next steps.
   validate_test_outcome:
@@ -89,5 +205,22 @@ nodes:
     nodes_depended_on:
     - execute_test_actions
     nodes_dependent_on: []
+    output_structure:
+    - description: Full textual representation of the raw test output as produced
+        by the test execution.
+      key: raw_output_text
+      type: str
+    - description: List of individual observations or notable events recorded during
+        the test.
+      key: observations
+      type: List[str]
+    - description: List of any numeric measurements or metric values extracted from
+        the test output.
+      key: numeric_metrics
+      type: List[float]
+    - description: Flag indicating whether the raw output contains any explicit success/failure
+        indicator.
+      key: success_indicator
+      type: bool
     prompt: Write down or collect all outputs, observations, or data produced by performing
       the test.

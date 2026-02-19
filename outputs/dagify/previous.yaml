@@ -1,80 +1,71 @@
 dag_type: plain_text
-description: A workflow that gathers test parameters, sets up the environment, runs
-  tests, analyzes results, generates a report, and sends notifications based on success
-  or failure.
-name: generic_test_workflow
+description: A fundamental workflow for performing a basic test operation consisting
+  of creating, executing, and verifying a test.
+name: simple_test_workflow
 nodes:
-  analyze_results:
+  collect_test_results:
     agent: false
-    description: Determine pass/fail status from test output.
-    name: analyze_results
+    description: Gather and consolidate the outputs and observations from the execution
+      of the test steps.
+    name: collect_test_results
     nodes_depended_on:
-    - run_tests
+    - execute_test_steps
     nodes_dependent_on:
-    - generate_report
-    - notify_success
-    - notify_failure
-    prompt: Analyze the test output and exit code to determine whether all tests passed.
-      Produce a summary with total tests, passed, failed, and a boolean indicating
-      overall success.
-  gather_test_parameters:
+    - verify_test_outcome
+    prompt: Collect all outputs and observations from the test execution steps and
+      prepare them for analysis and verification.
+  create_test_data:
     agent: false
-    description: Collect test parameters from configuration or environment variables.
-    name: gather_test_parameters
+    description: Generate or prepare the necessary data or inputs required for the
+      test execution.
+    name: create_test_data
+    nodes_depended_on:
+    - define_test_objective
+    nodes_dependent_on:
+    - execute_test_steps
+    prompt: Produce the exact test data or input values needed to carry out the test
+      defined. List the data outputs clearly.
+  define_test_objective:
+    agent: false
+    description: Specify the exact purpose and goal of the test to be performed.
+    name: define_test_objective
     nodes_depended_on: []
     nodes_dependent_on:
-    - setup_environment
-    prompt: Retrieve test configuration settings (e.g., test directory, test command,
-      environment variables) from a predefined config file or environment variables.
-      Output the parameters in JSON format.
-  generate_report:
+    - design_test_steps
+    - create_test_data
+    prompt: Clearly define the objective of the test in one or two sentences, specifying
+      what is being tested and the desired outcome.
+  design_test_steps:
     agent: false
-    description: Create a report summarizing the test results.
-    name: generate_report
+    description: Outline the individual steps required to carry out the test.
+    name: design_test_steps
     nodes_depended_on:
-    - analyze_results
-    nodes_dependent_on: []
-    prompt: Using the analysis from analyze_results, produce a concise test report.
-      Include counts, pass/fail summary, and key errors. Output the report as a plain
-      text block.
-  notify_failure:
-    agent: false
-    description: Send a notification if tests failed.
-    name: notify_failure
-    nodes_depended_on:
-    - analyze_results
-    - generate_report
-    nodes_dependent_on: []
-    prompt: If the overall test success is false, send a failure notification with
-      the test report and details. Output a confirmation message.
-  notify_success:
-    agent: false
-    description: Send a notification if tests passed.
-    name: notify_success
-    nodes_depended_on:
-    - analyze_results
-    - generate_report
-    nodes_dependent_on: []
-    prompt: If the overall test success is true, send a success notification (e.g.,
-      email or message) with the test report included. Output a confirmation message.
-  run_tests:
-    agent: false
-    description: Execute the test suite.
-    name: run_tests
-    nodes_depended_on:
-    - setup_environment
+    - define_test_objective
     nodes_dependent_on:
-    - analyze_results
-    prompt: Run the test command specified in the gathered parameters. Capture the
-      test output (stdout/stderr) and exit code. Return the raw output and exit code.
-  setup_environment:
+    - execute_test_steps
+    prompt: List the detailed, atomic steps needed to perform the test based solely
+      on the test objective provided. Each step should accomplish a single clear action.
+  execute_test_steps:
     agent: false
-    description: Set up the test environment by installing dependencies.
-    name: setup_environment
+    description: Run the test steps sequentially or concurrently using the prepared
+      test data.
+    name: execute_test_steps
     nodes_depended_on:
-    - gather_test_parameters
+    - design_test_steps
+    - create_test_data
     nodes_dependent_on:
-    - run_tests
-    prompt: Using the parameters from gather_test_parameters, install required dependencies
-      (e.g., via pip, npm, or system package manager). Ensure the environment is ready
-      for test execution. Output success or error status.
+    - collect_test_results
+    prompt: Perform each test step precisely as designed using the generated test
+      data. Document any immediate outputs or observations per step.
+  verify_test_outcome:
+    agent: false
+    description: Compare collected results with the original test objective to determine
+      if the test was successful.
+    name: verify_test_outcome
+    nodes_depended_on:
+    - collect_test_results
+    - define_test_objective
+    nodes_dependent_on: []
+    prompt: Using the test objective and collected results, verify whether the test
+      achieved the desired outcome. Provide a clear pass/fail determination and a
+      brief explanation.

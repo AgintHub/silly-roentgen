@@ -1,7 +1,6 @@
 dag_type: plain_text
-description: A workflow to perform a basic test operation consisting of defining test
-  scope, preparing inputs, executing test actions, checking outcomes, and summarizing
-  results.
+description: Workflow that defines, executes, assesses, summarizes, and communicates
+  test results to stakeholders.
 name: perform_test
 nodes:
   assess_test_results:
@@ -12,8 +11,7 @@ nodes:
     nodes_depended_on:
     - validate_test_outcome
     - define_success_criteria
-    nodes_dependent_on:
-    - summarize_test_findings
+    nodes_dependent_on: []
     prompt: Analyze the test results relative to the predefined success criteria.
       State if the test passes or fails, and explain why.
   define_success_criteria:
@@ -22,8 +20,7 @@ nodes:
     name: define_success_criteria
     nodes_depended_on:
     - define_test_scope
-    nodes_dependent_on:
-    - assess_test_results
+    nodes_dependent_on: []
     prompt: List measurable criteria or conditions that indicate the test is successful
       or unsuccessful.
   define_test_scope:
@@ -31,10 +28,7 @@ nodes:
     description: Specify the objective and scope of the test to be conducted.
     name: define_test_scope
     nodes_depended_on: []
-    nodes_dependent_on:
-    - prepare_test_inputs
-    - design_test_procedure
-    - define_success_criteria
+    nodes_dependent_on: []
     prompt: Define clearly the goal and scope of the test you will perform, including
       what is being tested and the desired outcome.
   design_test_procedure:
@@ -44,8 +38,7 @@ nodes:
     name: design_test_procedure
     nodes_depended_on:
     - define_test_scope
-    nodes_dependent_on:
-    - execute_test_actions
+    nodes_dependent_on: []
     prompt: Provide a clear, sequential procedure for performing the test as per the
       defined scope.
   execute_test_actions:
@@ -56,8 +49,7 @@ nodes:
     nodes_depended_on:
     - prepare_test_inputs
     - design_test_procedure
-    nodes_dependent_on:
-    - validate_test_outcome
+    nodes_dependent_on: []
     prompt: Execute all steps of the test procedure using the correct inputs and record
       observable actions or outputs.
   prepare_test_inputs:
@@ -67,8 +59,7 @@ nodes:
     name: prepare_test_inputs
     nodes_depended_on:
     - define_test_scope
-    nodes_dependent_on:
-    - execute_test_actions
+    nodes_dependent_on: []
     prompt: Prepare and list all inputs, data, or resources needed to carry out the
       test based on the defined scope.
   summarize_test_findings:
@@ -81,6 +72,15 @@ nodes:
     nodes_dependent_on: []
     prompt: Summarize the entire test including scope, procedure, input, outcome,
       success assessment, and final conclusion clearly and succinctly.
+  update_stakeholders:
+    agent: false
+    description: Inform stakeholders about the test findings and conclusions.
+    name: update_stakeholders
+    nodes_depended_on:
+    - summarize_test_findings
+    nodes_dependent_on: []
+    prompt: Compose a brief report for stakeholders that outlines the test purpose,
+      key findings, success assessment, and any recommended next steps.
   validate_test_outcome:
     agent: false
     description: Capture and document the raw results or outputs generated from the
@@ -88,7 +88,6 @@ nodes:
     name: validate_test_outcome
     nodes_depended_on:
     - execute_test_actions
-    nodes_dependent_on:
-    - assess_test_results
+    nodes_dependent_on: []
     prompt: Write down or collect all outputs, observations, or data produced by performing
       the test.
